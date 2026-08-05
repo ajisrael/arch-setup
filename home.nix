@@ -9,7 +9,7 @@
   programs.git = {
     enable = true;
     settings.user = {
-      name = "ajisrael";
+      name = "Alex Israels";
       email = "43039187+ajisrael@users.noreply.github.com";
     };
   };
