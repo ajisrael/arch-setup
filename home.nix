@@ -6,5 +6,11 @@
 
   programs.home-manager.enable = true;
 
+  programs.git = {
+    enable = true;
+    userName = "ajisrael";
+    userEmail = "43039187+ajisrael@users.noreply.github.com";
+  };
+
   home.packages = [ pkgs.hello ];
 }
