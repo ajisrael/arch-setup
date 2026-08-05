@@ -10,7 +10,7 @@
     enable = true;
     settings.user = {
       name = "ajisrael";
-      email = "CHANGE-ME@example.com";
+      email = "43039187+ajisrael@users.noreply.github.com";
     };
   };
 
