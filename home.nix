@@ -25,7 +25,10 @@
     link = path:
       config.lib.file.mkOutOfStoreSymlink "${repo}/config/${path}";
   in {
-    ".config/hypr/hyprland.lua".source = link "hypr/hyprland.lua";
+    ".config/hypr/hyprland.lua" = {
+      source = link "hypr/hyprland.lua";
+      force = true; # clobbers the auto-generated config from the first start-hyprland
+    };
     ".config/hypr/hyprlock.conf".source = link "hypr/hyprlock.conf";
     ".config/hypr/hyprpaper.conf".source = link "hypr/hyprpaper.conf";
     ".config/kitty/kitty.conf".source = link "kitty/kitty.conf";
