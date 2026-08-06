@@ -70,6 +70,7 @@ __p_glyph() { printf '%b' "\\U$(printf '%08x' "$1")"; }
 if [[ $__p_mode == graphics ]]; then
   G_ARCH=$(__p_glyph 0xf31c)    #  arch linux
   G_HOME=$(__p_glyph 0xf015)    #  home
+  G_FOLDER=$(__p_glyph 0xf07b)  #  folder
   G_BRANCH=$(__p_glyph 0xf126)  #  git branch
   G_CLOCK=$(__p_glyph 0xf017)   #  clock
   G_GEAR=$(__p_glyph 0xf013)    #  gear
@@ -84,7 +85,7 @@ if [[ $__p_mode == graphics ]]; then
   G_DIV=$(__p_glyph 0x21d5)     #  diverged
   G_MODIFIED=$(__p_glyph 0x00b1) # +/-
 else
-  G_ARCH= G_HOME= G_BRANCH= G_CLOCK= G_GEAR= G_TIMER= G_PY= G_NODE= G_JAVA=
+  G_ARCH= G_HOME= G_FOLDER= G_BRANCH= G_CLOCK= G_GEAR= G_TIMER= G_PY= G_NODE= G_JAVA=
   G_ERR='!'
   G_CHEVRON='>'
   G_UP='+' G_DN='-' G_DIV='<>'
@@ -100,7 +101,7 @@ __p_os() { # linux icon (nerd font only)
   [[ $__p_mode == graphics ]] && __p_wrap cyan "$G_ARCH"
 }
 
-__p_dir() { # full path; home icon + ~, last component bold white (p10k anchor)
+__p_dir() { # full path; home icon in ~, folder icon elsewhere + ~, last bold
   local p=${PWD/#$HOME/\~}
   local out=
   local -a parts=()
@@ -111,10 +112,11 @@ __p_dir() { # full path; home icon + ~, last component bold white (p10k anchor)
   else
     local IFS=/
     if [[ $p == \~/* ]]; then
-      [[ $__p_mode == graphics ]] && out+="$(__p_wrap blue "$G_HOME")"
+      [[ $__p_mode == graphics ]] && out+="$(__p_wrap blue "$G_FOLDER") "
       out+="$(__p_wrap blue '~')"
       read -r -a parts <<< "${p:2}"
     else
+      [[ $__p_mode == graphics ]] && out+="$(__p_wrap blue "$G_FOLDER") "
       read -r -a parts <<< "${p:1}"
     fi
     n=${#parts[@]}
