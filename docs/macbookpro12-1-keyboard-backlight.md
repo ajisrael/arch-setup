@@ -80,7 +80,7 @@ at GRUB, off at LUKS, then on again after boot.
 
 The fix is `config/modprobe.d/kbd-backlight.conf`, an `install` reroute for
 `applesmc` (the same mechanism as the SPI reroute, docs/macbookpro12-1-
-keyboard-spi-fix.md:119). It loads the real module, then writes ~10% of
+keyboard-spi-fix.md:119). It loads the real module, then writes ~50% of
 `max_brightness` to the LED. Because `modconf` bundles `/etc/modprobe.d` into
 the initramfs, the directive fires right after applesmc loads - before the LUKS
 prompt - and at every modprobe in the booted system.
@@ -143,8 +143,10 @@ sudo actkbd -n -s -d /dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd   # pre
 cat /sys/class/leds/smc::kbd_backlight/brightness   # changes on F5/F6
 ```
 
-Caveat: after boot the LED core cache starts at 0, so the first F6 press sets
-~10% regardless of hardware state; keep pressing to raise it.
+Caveat: the LED core cache starts at 0 at boot (applesmc has no
+`brightness_get`), so the modprobe.d boot floor re-asserts 50%
+(`config/modprobe.d/kbd-backlight.conf`); the first F5/F6 press then steps
+from there rather than from the hardware state.
 
 ## References
 
