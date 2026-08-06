@@ -35,7 +35,21 @@ done
 # reroute inside the image matches /etc. mkinitcpio builds to a temp file and
 # atomically replaces the image only on success, so a failed build cannot
 # clobber a working one. Keep a copy of the previous images regardless.
+REBUILD_INITRAMFS=0
 if [ "$MODPROBE_CHANGED" = 1 ]; then
+    REBUILD_INITRAMFS=1
+fi
+
+# Also rebuild if /etc/modprobe.d has files newer than the newest initramfs
+# image - covers /etc being updated before this script started rebuilding
+# automatically, which leaves the image stale.
+newest_conf=$(ls -t /etc/modprobe.d/*.conf 2>/dev/null | head -1)
+newest_img=$(ls -t /boot/initramfs-*.img 2>/dev/null | head -1)
+if [ -n "$newest_conf" ] && [ -n "$newest_img" ] && [ "$newest_conf" -nt "$newest_img" ]; then
+    REBUILD_INITRAMFS=1
+fi
+
+if [ "$REBUILD_INITRAMFS" = 1 ]; then
     BACKUP_DIR="/var/backup/initramfs-pre-modprobe"
     sudo mkdir -p "$BACKUP_DIR"
     stamp="$(date +%Y%m%d-%H%M%S)"
@@ -43,7 +57,7 @@ if [ "$MODPROBE_CHANGED" = 1 ]; then
         [ -e "$img" ] || continue
         sudo cp -a "$img" "$BACKUP_DIR/$(basename "$img").$stamp"
     done
-    echo "==> modprobe.d changed; rebuilding initramfs (previous images in $BACKUP_DIR)"
+    echo "==> modprobe.d changed or image stale; rebuilding initramfs (previous images in $BACKUP_DIR)"
     sudo mkinitcpio -P
 fi
 
@@ -73,4 +87,4 @@ sudo systemctl restart actkbd.service
 echo "==> actkbd deployed. Enabled unit points at udev's own by-path symlink:"
 echo "    $KBD_DEV"
 echo "    Verify keycodes with:  sudo actkbd -n -s -d $KBD_DEV"
-echo "==> modprobe.d deployed; initramfs $( [ "$MODPROBE_CHANGED" = 1 ] && echo 'rebuilt' || echo 'already current' )"
+echo "==> modprobe.d deployed; initramfs $( [ "$REBUILD_INITRAMFS" = 1 ] && echo 'rebuilt' || echo 'already current' )"
