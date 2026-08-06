@@ -144,12 +144,13 @@ __p_git() { # branch + ahead/behind + dirty/staged/untracked marks, one git call
       return
     fi
     __p_git_dir=$wd; __p_git_t=$now
-    local branch= oid= ahead=0 behind=0 staged=0 modified=0 untracked=0
+    local branch= oid= upstream= ahead=0 behind=0 staged=0 modified=0 untracked=0
     local line xy
     while IFS= read -r line; do
       case $line in
         '# branch.head '*) branch=${line#*'# branch.head '} ;;
         '# branch.oid '*)  oid=${line#*'# branch.oid '} ;;
+        '# branch.upstream '*) upstream=${line#*'# branch.upstream '} ;;
         '# branch.ab '*)   local ab=${line#*'# branch.ab '}
           ahead=${ab%% *}; ahead=${ahead#+}
           behind=${ab##* }; behind=${behind#-} ;;
@@ -177,10 +178,40 @@ __p_git() { # branch + ahead/behind + dirty/staged/untracked marks, one git call
     else
       __p_git_fg=green
     fi
+    [[ -n $upstream ]] && __p_git_fetch
   fi
   if [[ -n $__p_git_branch ]]; then
     __p_vcs="$(__p_wrap "$__p_git_fg" " ${G_BRANCH}${G_BRANCH:+ }${__p_git_branch}${__p_git_marks}")"
   fi
+}
+
+__p_git_fetch() { # background fetch every 5 min so upstream changes show up
+  # without a manual fetch. The ( cmd & ) subshell fires and forgets: no job
+  # notification on the prompt, and the 5-min / liveness guards stop storms
+  # across terminals. fetch only updates remote-tracking refs, never the
+  # work tree, and never prompts for credentials (stdin is /dev/null).
+  local state="${XDG_RUNTIME_DIR:-${TMPDIR:-/tmp}}/__p_git_fetch_${UID}.pid"
+  local now pid ts
+  if [[ -v EPOCHREALTIME ]]; then
+    now=${EPOCHREALTIME%%.*}
+  else
+    now=$(date +%s)
+  fi
+  if [[ -r $state ]]; then
+    read -r pid ts < "$state"
+    if [[ $pid =~ ^[0-9]+$ && $ts =~ ^[0-9]+$ ]]; then
+      if kill -0 "$pid" 2>/dev/null; then
+        return
+      fi
+      if (( now - ts < 300 )); then
+        return
+      fi
+    fi
+  fi
+  (
+    GIT_TERMINAL_PROMPT=0 </dev/null git fetch --quiet >/dev/null 2>&1 &
+    echo "$! $now" > "$state"
+  )
 }
 
 __p_env() { # python/node/java, only while that env is active (right side)
