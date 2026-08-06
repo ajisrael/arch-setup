@@ -8,8 +8,7 @@
   "modules-right": ["network", "cpu", "memory", "backlight", "pulseaudio", "battery", "tray"],
 
   "hyprland/workspaces": {
-    "format": "{name}",
-    "on-click": "activate"
+    "format": "{name}"
   },
   "clock": {
     "format": "{:%a %d %b  %H:%M}",
