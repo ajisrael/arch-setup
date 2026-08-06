@@ -98,6 +98,20 @@ repo-managed):
    instead (`MODULES=()`), add `applesmc` to that hook's `add_module`.
 2. Rebuild the image: `sudo mkinitcpio -P`
 
+## Screen brightness keys (F1/F2)
+
+applespi maps F1/F2 to `KEY_BRIGHTNESSDOWN`/`KEY_BRIGHTNESSUP` (224/225),
+plain evdev events with no in-kernel handler - so at a bare tty1 nothing
+reacted, exactly like the keyboard backlight. actkbd now owns them too
+(`config/actkbd/actkbd.conf`) via `brightnessctl set +/-5%`, with `key,rep`
+so holding the key repeats. Unlike the SMC backlight, the screen backlight
+exposes a working `brightness_get`, so relative steps are safe.
+
+The Hyprland `XF86MonBrightnessUp/Down` binds were removed
+(`config/hypr/hyprland.lua`): actkbd reads the device globally, so keeping
+them would double-step. The screen stays at its hardware default during the
+initramfs (nothing turns it off, so no boot floor is needed).
+
 ## Setup on archeus
 
 ```sh
