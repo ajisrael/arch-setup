@@ -55,6 +55,14 @@
       config.lib.file.mkOutOfStoreSymlink "${repo}/config/${path}";
   in {
     ".ssh/config".force = true; # programs.ssh generates it; clobber the pre-flake file
+    ".bashrc" = {
+      source = link "bash/bashrc";
+      force = true; # clobber the stock ~/.bashrc so home-manager owns it
+    };
+    ".bash_profile" = {
+      source = link "bash/bash_profile";
+      force = true; # login shells (tty1/ssh) delegate to ~/.bashrc
+    };
     ".config/hypr/hyprland.lua" = {
       source = link "hypr/hyprland.lua";
       force = true; # clobbers the auto-generated config from the first start-hyprland

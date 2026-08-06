@@ -1,0 +1,8 @@
+# config/bash/bash_profile - login shell entry on archeus.
+#
+# tty1 logins and ssh read this file first; interactive rc lives in
+# ~/.bashrc (a home-manager symlink to this repo's config/bash/bashrc).
+
+case $- in *i*) ;; *) return 0 ;; esac
+
+[[ -f "$HOME/.bashrc" ]] && source "$HOME/.bashrc"

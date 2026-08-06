@@ -81,5 +81,6 @@
   aurPackages = [
     "paru"
     "actkbd"
+    "ttf-meslo-nerd-font-powerlevel10k" # MesloLGS NF, for the bash prompt icons in kitty
   ];
 }

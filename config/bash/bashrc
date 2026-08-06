@@ -1,0 +1,16 @@
+# config/bash/bashrc - interactive bash rc on archeus.
+#
+# Owned by home-manager (symlinked to ~/.bashrc). The prompt lives in
+# prompt.bashrc next to this file so it can be edited and reloaded
+# independently.
+
+case $- in *i*) ;; *) return 0 ;; esac
+
+# Resolve the real path in case ~/.bashrc is reached through its symlink.
+__bashrc_dir="${BASH_SOURCE[0]}"
+if command -v readlink >/dev/null 2>&1; then
+  __bashrc_real=$(readlink -f "$__bashrc_dir" 2>/dev/null) && __bashrc_dir=$__bashrc_real
+fi
+__bashrc_dir=$(dirname -- "$__bashrc_dir")
+source "$__bashrc_dir/prompt.bashrc"
+unset __bashrc_real __bashrc_dir

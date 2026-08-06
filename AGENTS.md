@@ -4,6 +4,13 @@ Arch Linux box (`archeus`): Hyprland workstation. The system layer stays
 pacman-managed (see `docs/`); standalone home-manager owns user config
 files and user tools via `flake.nix` + `home.nix`.
 
+The bash prompt (Tokyo Night, mirrors the macOS Powerlevel10k look) lives in
+`config/bash/` (`bashrc` + `prompt.bashrc`), symlinked to `~/.bashrc` and
+`~/.bash_profile` by home-manager. It renders truecolor + nerd-font glyphs in
+kitty (MesloLGS NF installed via `system-packages.nix` AUR) and degrades to
+256-color + plain glyphs on `TERM=linux` (tty1) automatically - keep that
+mode split intact rather than forcing icons everywhere.
+
 ## The user always runs ./rebuild.sh themselves
 
 Never run `./rebuild.sh` or `home-manager switch --flake .#archeus` on the
