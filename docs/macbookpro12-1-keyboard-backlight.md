@@ -113,8 +113,16 @@ exposes a working `brightness_get`, so relative steps are safe.
 
 The Hyprland `XF86MonBrightnessUp/Down` binds were removed
 (`config/hypr/hyprland.lua`): actkbd reads the device globally, so keeping
-them would double-step. The screen stays at its hardware default during the
-initramfs (nothing turns it off, so no boot floor is needed).
+them would double-step.
+
+The screen starts at 50% in the booted system: `config/modprobe.d/backlight-
+screen.conf` reroutes `i915` (which provides `intel_backlight`) and writes
+half of `max_brightness` once the device appears. Unlike the keyboard LED this
+is a one-shot set (the backlight exposes `brightness_get`), not a floor
+re-assertion. The LUKS prompt keeps the firmware brightness - `i915` is not in
+the initramfs, and loading the GPU there would change how the console renders
+for little gain; the reroute would cover LUKS automatically if `i915` were
+ever added to `MODULES=`.
 
 ## Setup on archeus
 

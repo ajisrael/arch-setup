@@ -55,12 +55,15 @@ home-manager is user-scope only - it cannot install root packages or write
   declarative, NOT version-pinned - versions float with `pacman -Syu`.
 - **Root config files**: versioned under `config/<tool>/`, deployed to `/etc`
   with `build/system-config.sh`. Currently `config/actkbd/` (keyboard-backlight
-  hotkey daemon) and `config/modprobe.d/` (an `install` reroute that re-asserts
-  the `smc::kbd_backlight` floor after applesmc loads, for the LUKS prompt).
+  hotkey daemon) and `config/modprobe.d/` (install reroutes: re-assert the
+  `smc::kbd_backlight` floor after applesmc loads for the LUKS prompt, and set
+  `intel_backlight` to 50% after i915 loads in the booted system).
   Extend that script rather than hand-editing `/etc`. `modprobe.d` files
   deployed to `/etc/modprobe.d/` get bundled into the initramfs automatically
-  by the `modconf` initramfs hook on `mkinitcpio -P`. Note: udev rules are NOT
-  a reliable way to run something inside the initramfs (observed - a rule that
-  worked in the booted system never fired there); use a modprobe.d reroute.
+  by the `modconf` initramfs hook on `mkinitcpio -P` (the script rebuilds the
+  image itself when a file changes or the image is stale). Note: udev rules are
+  NOT a reliable way to run something inside the initramfs (observed - a rule
+  that worked in the booted system never fired there); use a modprobe.d
+  reroute.
 - AUR helper on archeus is `paru`; keep it that way (scripts reference it).
 
