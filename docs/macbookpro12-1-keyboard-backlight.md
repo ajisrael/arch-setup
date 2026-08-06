@@ -72,15 +72,23 @@ with actkbd reading the device globally, Hyprland binds would double-step.
 ## Backlight at the LUKS prompt (boot floor)
 
 The F5/F6 daemon only helps once the booted system is up; the LUKS passphrase
-prompt runs inside the initramfs, before any service. To keep the keys visible
-while decrypting, `config/udev/10-kbd-backlight-boot.rules` sets the backlight
-to ~10% of max as soon as the `smc::kbd_backlight` LED device appears. The
-`systemd` initramfs hook bundles `/etc/udev/rules.d` into the image on every
-`mkinitcpio -P`, so the rule also applies during the prompt. The same rule
-covers the normal boot, which also removes the "LED cache starts at 0" caveat
-below.
+prompt runs inside the initramfs, before any service. Worse: `applesmc`
+registers its LED with `brightness_set` only (applesmc.c:1069-1072), so when
+the module loads the LED core initializes the backlight OFF - observed as lit
+at GRUB, off at LUKS, then on again after boot.
 
-Two edits stay in `/etc` by hand (the boot layer is documented, not
+The fix is `config/modprobe.d/kbd-backlight.conf`, an `install` reroute for
+`applesmc` (the same mechanism as the SPI reroute, docs/macbookpro12-1-
+keyboard-spi-fix.md:119). It loads the real module, then writes ~10% of
+`max_brightness` to the LED. Because `modconf` bundles `/etc/modprobe.d` into
+the initramfs, the directive fires right after applesmc loads - before the LUKS
+prompt - and at every modprobe in the booted system.
+
+A udev rule was tried first (`/etc/udev/rules.d/10-kbd-backlight-boot.rules`):
+it reliably fired in the booted system but not inside the initramfs, leaving
+the backlight off at LUKS. The modprobe.d reroute replaces it.
+
+One edit stays in `/etc` by hand (the boot layer is documented, not
 repo-managed):
 
 1. `/etc/mkinitcpio.conf`: make sure `applesmc` is in the initramfs so the SMC
@@ -100,11 +108,10 @@ git clone https://aur.archlinux.org/paru.git ~/build/paru && cd ~/build/paru && 
 # 2. System packages (actkbd, brightnessctl) from the tracked lists
 ./build/system-packages.sh
 
-# 3. Deploy config + unit + udev rules (enables and starts the service,
-#    applies the backlight boot floor)
+# 3. Deploy config + unit + modprobe.d boot floor
 ./build/system-config.sh
 
-# 4. Bundle the udev rules into the initramfs (LUKS-prompt backlight), after
+# 4. Bundle the boot floor into the initramfs (LUKS-prompt backlight), after
 #    adding applesmc to MODULES= - see "Backlight at the LUKS prompt"
 sudo mkinitcpio -P
 ```
