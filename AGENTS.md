@@ -54,8 +54,10 @@ home-manager is user-scope only - it cannot install root packages or write
   Reconcile against the box with `pacman -Qqen` / `pacman -Qqem`. Tracking is
   declarative, NOT version-pinned - versions float with `pacman -Syu`.
 - **Root config files**: versioned under `config/<tool>/`, deployed to `/etc`
-  with `build/system-config.sh` (currently only `config/actkbd/`, the
-  keyboard-backlight hotkey daemon). Extend that script rather than hand-editing
-  `/etc`.
+  with `build/system-config.sh`. Currently `config/actkbd/` (keyboard-backlight
+  hotkey daemon) and `config/udev/` (udev rules - `smc::kbd_backlight` boot
+  floor for the LUKS prompt). Extend that script rather than hand-editing
+  `/etc`. udev rules deployed to `/etc/udev/rules.d/` get bundled into the
+  initramfs automatically by the `systemd` initramfs hook on `mkinitcpio -P`.
 - AUR helper on archeus is `paru`; keep it that way (scripts reference it).
 

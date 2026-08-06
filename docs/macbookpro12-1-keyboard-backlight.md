@@ -69,6 +69,27 @@ that, and the same warning applies to any manual `actkbd` test run.
 The Hyprland `XF86KbdBrightness*` binds previously drafted here are dropped:
 with actkbd reading the device globally, Hyprland binds would double-step.
 
+## Backlight at the LUKS prompt (boot floor)
+
+The F5/F6 daemon only helps once the booted system is up; the LUKS passphrase
+prompt runs inside the initramfs, before any service. To keep the keys visible
+while decrypting, `config/udev/10-kbd-backlight-boot.rules` sets the backlight
+to ~10% of max as soon as the `smc::kbd_backlight` LED device appears. The
+`systemd` initramfs hook bundles `/etc/udev/rules.d` into the image on every
+`mkinitcpio -P`, so the rule also applies during the prompt. The same rule
+covers the normal boot, which also removes the "LED cache starts at 0" caveat
+below.
+
+Two edits stay in `/etc` by hand (the boot layer is documented, not
+repo-managed):
+
+1. `/etc/mkinitcpio.conf`: make sure `applesmc` is in the initramfs so the SMC
+   LED exists before the prompt. If the SPI stack is carried in
+   `MODULES=(...)`, append it there - `MODULES=(acpi_call spi_pxa2xx_platform
+   spi_pxa2xx_pci applespi applesmc)`. If the `apple-spi` install hook is used
+   instead (`MODULES=()`), add `applesmc` to that hook's `add_module`.
+2. Rebuild the image: `sudo mkinitcpio -P`
+
 ## Setup on archeus
 
 ```sh
@@ -79,8 +100,13 @@ git clone https://aur.archlinux.org/paru.git ~/build/paru && cd ~/build/paru && 
 # 2. System packages (actkbd, brightnessctl) from the tracked lists
 ./build/system-packages.sh
 
-# 3. Deploy config + unit (enables and starts the service)
+# 3. Deploy config + unit + udev rules (enables and starts the service,
+#    applies the backlight boot floor)
 ./build/system-config.sh
+
+# 4. Bundle the udev rules into the initramfs (LUKS-prompt backlight), after
+#    adding applesmc to MODULES= - see "Backlight at the LUKS prompt"
+sudo mkinitcpio -P
 ```
 
 `system-config.sh` refuses to start if the by-path symlink is missing (it
