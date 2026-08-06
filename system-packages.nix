@@ -76,6 +76,8 @@
     "lazygit"
     "opencode"
     "brightnessctl"
+    # Archives
+    "unzip"
   ];
 
   aurPackages = [
