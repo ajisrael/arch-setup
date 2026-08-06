@@ -43,3 +43,19 @@ truth for the install sequence.
 - `programs.ssh` owns `~/.ssh/config` and will refuse to overwrite a
   pre-existing hand-written file - set `home.file.".ssh/config".force = true`
   inside the existing `home.file` attrset to clobber it.
+
+## System (root) packages and config are tracked, not nix-managed
+
+home-manager is user-scope only - it cannot install root packages or write
+`/etc`. Root-level things are tracked in the repo instead:
+
+- **Packages**: `system-packages.nix` (official repos via pacman + AUR via
+  paru). Install with `build/system-packages.sh`, or `./rebuild.sh --packages`.
+  Reconcile against the box with `pacman -Qqen` / `pacman -Qqem`. Tracking is
+  declarative, NOT version-pinned - versions float with `pacman -Syu`.
+- **Root config files**: versioned under `config/<tool>/`, deployed to `/etc`
+  with `build/system-config.sh` (currently only `config/actkbd/`, the
+  keyboard-backlight hotkey daemon). Extend that script rather than hand-editing
+  `/etc`.
+- AUR helper on archeus is `paru`; keep it that way (scripts reference it).
+
