@@ -28,3 +28,8 @@
 
 - [ ] web browser (Chrome)
 - [ ] neovim
+
+## System
+
+- [ ] Add script to snapshot system and restore from a snapshot.
+    - Note: just need to be comfortable with snapshot and restore in case something breaks
