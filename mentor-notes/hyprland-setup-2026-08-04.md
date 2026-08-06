@@ -85,6 +85,62 @@ iwd backend, no DE, no mesa yet).
   welcome-screen configs (hyprland, kitty, waybar, mako, wofi, ...) as they're
   created.
 
+### Checkpoint 4 DONE: home-manager live on archeus (2026-08-04)
+- Branch decision: nixpkgs-unstable + home-manager master (freshest Hyprland
+  ecosystem; herdr is only on master). homeConfigurations named "archeus".
+- flake.nix + home.nix scaffolded in this repo; rebuild.sh + bootstrap.sh
+  (encodes all Checkpoint 3 gotchas) + AGENTS.md + .gitignore added.
+- Bootstrap path: `nix profile add` home-manager CLI -> hit the classic clash
+  (generation's home-manager-path vs profile CLI, both bin/home-manager prio 5)
+  -> removed profile CLI -> first switch via `nix run github:...#home-manager`.
+  Generation now self-hosts home-manager on PATH.
+- Repo convention (matches user's macOS convention): user ALWAYS runs
+  ./rebuild.sh themselves; agents validate with `nix flake check --no-build`.
+- home-manager master renamed git options: programs.git.settings.user.{name,
+  email} (userName/userEmail deprecated, emit traces).
+- User explicitly asked: no hardcoded ~/dotfiles references in this repo -
+  scrubbed from AGENTS.md/bootstrap.sh/notes. Repo is self-contained.
+- Repo hygiene: commit flake.lock, ignore result. Git identity now declarative
+  via programs.git so committing on the box works after home-manager switch.
+
+### NEXT: Checkpoint 5 - welcome-screen components
+- Split: pacman gets system/desktop packages (pipewire stack, waybar, mako,
+  wofi, hyprlock, hypridle, hyprpaper, portals, clipboard, screenshot tools,
+  polkit agent); home-manager owns the config files (hyprland.lua, kitty.conf,
+  waybar, mako, wofi, hyprlock, ...) as plain files symlinked via home.file.
+- Still to do after: session entry for start-hyprland at login; SDDM later.
+
+### Checkpoint 5 - Batch 1+2 DONE: all packages installed (2026-08-04)
+- Batch 1 (audio): pipewire wireplumber pipewire-pulse pipewire-audio alsa-utils.
+  User services enabled (pipewire.socket, pipewire-pulse.socket, wireplumber).
+  Verified: aplay -l shows card 1 "CS4208 Analog" (Cirrus HDA, snd_hda_intel);
+  wpctl status shows "Built-in Audio Analog Stereo" default sink vol 0.40.
+  RTKit warnings in wpctl output are benign (no rtkit installed - optional).
+- Batch 2 (the rest) - user weighed alternatives for each, all recommended
+  picks chosen: hyprpaper, hyprlock, hypridle, hyprpolkitagent, waybar, mako,
+  wofi, wl-clipboard, cliphist, grim+slurp+swappy, xdg-desktop-portal,
+  xdg-desktop-portal-hyprland, brightnessctl, thunar, less.
+  - Deliberately NOT installed: pamixer (waybar's volume module uses wpctl
+    natively - zero extra package), jack2 (chose pipewire-jack at pacman's
+    provider prompt so jack API goes through PipeWire).
+  - Added less (git pager / man pages were missing).
+- Alternative analysis recorded: wallpaper hyprpaper>swww>swaybg; bar
+  waybar>hyprpanel>eww; notif mako>swaync; launcher wofi>fuzzel>rofi-wayland;
+  file mgr thunar>pcmanfm>yazi; screenshots grim/slurp/swappy>hyprshot;
+  auth agent hyprpolkitagent>polkit-kde-agent.
+
+### WRAP-UP checkpoint (deferred, after welcome-screen configs)
+- Declarative pacman list: export the system package list as a nix value in
+  flake.nix (e.g. systemPackages output) + system-packages.sh running
+  `sudo pacman -S --needed $(nix eval .#systemPackages --raw)`; fold into
+  rebuild.sh next to home-manager switch (mirrors darwin-rebuild doing brew).
+  Gives the brew-under-nix benefit (single source of truth) without pretending
+  nix runs pacman (home-manager is user-level, verified - no pacman module).
+  Honest limit: list is declarative, NOT reproducible - versions float with
+  pacman -Syu; true pinning needs cache archiving. Boot layer (GRUB+LUKS,
+  mkinitcpio, SPI keyboard fix) stays in docs/arch-setup-mac.md.
+- Session entry for start-hyprland at login; SDDM later.
+
 ### Config format change (v0.55+) - MAJOR gotcha
 - Hyprland config is now Lua at ~/.config/hypr/hyprland.lua (auto-generated if
   missing; default shipped at /usr/share/hypr/hyprland.lua). The old
