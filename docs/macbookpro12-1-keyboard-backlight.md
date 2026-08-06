@@ -47,7 +47,7 @@ Files under `config/actkbd/`, deployed to `/etc` by `build/system-config.sh`:
 - `actkbd.conf` - binds 229 (`F5`, down) and 230 (`F6`, up) to
   `kbd-backlight-step`.
 - `kbd-backlight-step` - steps `smc::kbd_backlight` via sysfs: 10% on a key
-  press, 1% on repeat (so holding F5/F6 ramps smoothly instead of slamming).
+  press, 2% on repeat (so holding F5/F6 ramps quickly).
 - `actkbd.service` - systemd unit pointing at udev's own by-path symlink
   `/dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd` (created by
   `/usr/lib/udev/rules.d/60-persistent-input.rules`, so it does not depend on
