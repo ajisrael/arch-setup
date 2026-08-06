@@ -95,7 +95,7 @@ G_STAGED='+' G_UNTRACKED='?'
 
 # ---- segments ----------------------------------------------------------------
 declare -g __p_git_dir= __p_git_t=0 __p_git_fg=green __p_git_marks= \
-  __p_git_branch= __p_vcs= __p_node_ver= __p_env_t=0 __p_last=
+  __p_git_branch= __p_vcs= __p_node_ver= __p_env_t=0
 
 __p_os() { # linux icon (nerd font only)
   [[ $__p_mode == graphics ]] && __p_wrap cyan "$G_ARCH"
@@ -221,17 +221,41 @@ __p_fmtdur() { # $1=seconds $2=tenths
   fi
 }
 
+# ---- command execution time (DEBUG trap) --------------------------------------
+# The DEBUG trap timestamps when the first command of a line starts; the next
+# prompt measures elapsed time from there (p10k-style). A plain "time since the
+# last prompt" would count idle/typing time too, so it is not used.
+declare -g __p_in_cmd=false __p_cmd_start_us=0
+
+__p_now_us() { # current epoch time in microseconds
+  if [[ -v EPOCHREALTIME ]]; then
+    printf '%s' "$(( 10#${EPOCHREALTIME%.*} * 1000000 + 10#${EPOCHREALTIME#*.} ))"
+  else
+    printf '%s' "$(( $(date +%s) * 1000000 ))"
+  fi
+}
+
+__p_debug() { # DEBUG trap: timestamp the start of the first command after a prompt
+  if [[ $__p_in_cmd == false ]]; then
+    __p_in_cmd=true
+    __p_cmd_start_us=$(__p_now_us)
+  fi
+  return 0
+}
+trap '__p_debug' DEBUG
+
 # ---- prompt assembly ---------------------------------------------------------
 __p_ps1() {
   local rc=$?
-  local now frac
-  if [[ -v EPOCHREALTIME ]]; then
-    now=${EPOCHREALTIME%%.*} frac=${EPOCHREALTIME#*.} frac=${frac:0:1}
-  else
-    now=$(date +%s) frac=0
+  local -i dur=0 frac=0
+  if [[ $__p_in_cmd == true && $__p_cmd_start_us -gt 0 ]]; then
+    local -i dur_us=$(( $(__p_now_us) - __p_cmd_start_us ))
+    (( dur_us < 0 )) && dur_us=0
+    dur=$(( dur_us / 1000000 ))
+    frac=$(( (dur_us % 1000000) / 100000 ))
   fi
-  local -i dur=$(( now - __p_last ))
-  __p_last=$now
+  __p_in_cmd=false
+  __p_cmd_start_us=0
 
   # right side: exit status, duration, jobs, envs, time (p10k order)
   local right= plain= seg
@@ -280,9 +304,5 @@ __p_ps1() {
 
 PROMPT_COMMAND=__p_ps1
 
-# baseline so the first prompt's duration segment starts from "now", not epoch
-if [[ -v EPOCHREALTIME ]]; then
-  __p_last=${EPOCHREALTIME%%.*}
-else
-  __p_last=$(date +%s)
-fi
+# declare -g above already initializes the DEBUG-trap state, so a fresh shell
+# (or re-source) shows no duration on the first prompt.
