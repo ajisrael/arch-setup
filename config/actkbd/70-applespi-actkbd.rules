@@ -1,0 +1,4 @@
+# Stable symlink for the MacBook SPI keyboard input device so actkbd's unit
+# can reference a fixed path. Device name comes from the applespi driver
+# (drivers/input/keyboard/applespi.c). Installed by build/system-config.sh.
+ACTION=="add", KERNEL=="event*", SUBSYSTEM=="input", ATTRS{name}=="Apple SPI Keyboard", ATTRS{phys}=="applespi/input0", SYMLINK+="input/actkbd-kbd"

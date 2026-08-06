@@ -1,0 +1,18 @@
+# Keyboard shortcut daemon for the SMC keyboard backlight (archeus).
+#
+# Replaces the unit shipped by the actkbd AUR package: this one points at the
+# stable udev symlink (70-applespi-actkbd.rules) instead of a boot-order
+# dependent /dev/input/eventN, and stays in the foreground so systemd can
+# track and restart it.
+[Unit]
+Description=actkbd keyboard shortcut daemon
+After=systemd-udevd.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/actkbd -q -d /dev/input/actkbd-kbd -c /etc/actkbd.conf
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
