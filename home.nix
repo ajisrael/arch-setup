@@ -16,6 +16,19 @@
     };
   };
 
+  # Key is named ~/.ssh/github (not a default identity file), so pin it to the
+  # host - otherwise ssh only offers it when it is loaded into the agent.
+  programs.ssh = {
+    enable = true;
+    matchBlocks = {
+      "github.com" = {
+        user = "git";
+        identityFile = [ "~/.ssh/github" ];
+        identitiesOnly = true;
+      };
+    };
+  };
+
   home.packages = [ pkgs.hello ];
 
   # Live-editable configs: plain files in the repo, symlinked into ~/.config.
