@@ -7,5 +7,4 @@ border-radius=8
 padding=10
 margin=10
 width=400
-timeout=5000
 default-timeout=5000
