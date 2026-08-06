@@ -253,11 +253,11 @@ IgnorePkg = linux linux-headers linux-docs
 
 Then, each time a new `linux` version lands, redo steps 1-5 above (refresh
 the packaging tree, confirm the patch still applies, bump `pkgrel`,
-rebuild), and `pacman -U` the new packages. `build/rebuild.sh` in this repo
+rebuild), and `pacman -U` the new packages. `build/rebuild-patch.sh` in this repo
 automates exactly that loop (clone/fetch, hard-reset, re-apply the patches,
 bump `pkgrel`, `updpkgsums`, `makepkg`, install). `build/setup-patch.sh` copies
-`rebuild.sh` and both patches into a dedicated directory on this system
-(default `~/build/linux/`) - run it once, then `~/build/linux/rebuild.sh`
+`rebuild-patch.sh` and both patches into a dedicated directory on this system
+(default `~/build/linux/`) - run it once, then `~/build/linux/rebuild-patch.sh`
 after each kernel bump.
 
 ## References

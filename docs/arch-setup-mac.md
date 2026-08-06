@@ -750,8 +750,9 @@ Reboot, then confirm: `cat /sys/power/mem_sleep` -> `[s2idle] deep`.
 
 Permanent fix - the local kernel patch `build/0002-spi-pxa2xx-lpss-s3-resume.patch`
 restores the LPSS private registers on resume, so deep sleep works again.
-Apply it with `./build/rebuild.sh` (rebuilds the kernel with both local
-patches), then remove the s2idle override above.
+Apply it with `./build/setup-patch.sh` then `~/build/linux/rebuild-patch.sh`
+(rebuilds the kernel with both local patches), then remove the s2idle
+override above.
 
 ---
 

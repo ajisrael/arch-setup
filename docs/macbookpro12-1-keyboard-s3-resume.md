@@ -90,15 +90,15 @@ suspend/resume code.
 Both local patches live in `build/`:
 `0001-spi-pxa2xx-macbookpro12-1-pio.patch` (forced PIO, already in the
 running kernel) and `0002-spi-pxa2xx-lpss-s3-resume.patch`. `build/setup-patch.sh`
-copies `rebuild.sh` and the patches to a dedicated directory on this system
-(default `~/build/linux/`); `rebuild.sh` there clones the Arch kernel
+copies `rebuild-patch.sh` and the patches to a dedicated directory on this system
+(default `~/build/linux/`); `rebuild-patch.sh` there clones the Arch kernel
 packaging tree, applies both, bumps `pkgrel`, builds, and installs. See
 [docs/macbookpro12-1-keyboard-kernel-patch.md](macbookpro12-1-keyboard-kernel-patch.md)
 for the manual steps.
 
 ```bash
 ./build/setup-patch.sh
-~/build/linux/rebuild.sh
+~/build/linux/rebuild-patch.sh
 ```
 
 ## Verify

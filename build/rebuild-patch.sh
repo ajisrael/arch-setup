@@ -44,6 +44,12 @@ for key in $(sed -n '/^validpgpkeys=(/,/^)/p' PKGBUILD | grep -oE '[0-9A-F]{40}'
   done
 done
 
+# Stale packages from the previous kernel version are left in this directory
+# by makepkg; drop them so the install glob below matches only what makepkg
+# just produced (otherwise pacman -U sees both versions and fails on a
+# duplicate target).
+rm -f linux-*.pkg.tar.zst
+
 # If `patch -Np1` fails inside prepare() (hunk offsets drifted after a
 # kernel bump), rebase the local patches against the new tree and re-run.
 # -j$(nproc) parallelizes the build (Arch's default makepkg.conf leaves
