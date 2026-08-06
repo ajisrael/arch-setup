@@ -18,8 +18,8 @@ REPO=https://gitlab.archlinux.org/archlinux/packaging/packages/linux.git
 if [[ ! -d linux/.git ]]; then
   git clone "$REPO"
 fi
-git -C linux pull --ff-only
-git -C linux checkout -- PKGBUILD              # discard last run's edits
+git -C linux fetch origin
+git -C linux reset --hard origin/main          # discard last run's edits
 for patch in "${PATCHES[@]}"; do
   cp "$patch" linux/
 done
