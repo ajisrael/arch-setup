@@ -1,7 +1,7 @@
 # MacBookPro12,1 Keyboard Backlight Keys (F5/F6)
 
 **Status:** solved with a system-level `actkbd` service (see "Fix"), committed
-to the repo as `config/actkbd/`. Not yet applied/verified on archeus.
+to the repo as `config/actkbd/`. Applied and verified on archeus.
 
 ## Summary
 
@@ -47,12 +47,24 @@ Files under `config/actkbd/`, deployed to `/etc` by `build/system-config.sh`:
 - `actkbd.conf` - binds 229 (`F5`, down) and 230 (`F6`, up) to
   `kbd-backlight-step`.
 - `kbd-backlight-step` - steps `smc::kbd_backlight` by ~10% via sysfs.
-- `actkbd.service` - systemd unit pointing at the stable device symlink. No
-  `[Install]` section: it is started by udev (`SYSTEMD_WANTS`) when the
-  keyboard device appears, so it can never race the device node.
-- `70-applespi-actkbd.rules` - udev rule creating `/dev/input/actkbd-kbd`
-  (a symlink to the applespi keyboard event node, so the unit does not depend
-  on boot-order-dependent `/dev/input/eventN`) and starting the service.
+- `actkbd.service` - systemd unit pointing at udev's own by-path symlink
+  `/dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd` (created by
+  `/usr/lib/udev/rules.d/60-persistent-input.rules`, so it does not depend on
+  boot-order-dependent `/dev/input/eventN`). Enabled at `multi-user.target`.
+  `ExecStartPre` waits for the node before the daemon starts - see the fopen
+  race below.
+
+No custom udev rule: an earlier version created its own
+`/dev/input/actkbd-kbd` symlink and started the service from the rule
+(`SYSTEMD_WANTS`), but `udevadm trigger` does not reliably re-create a symlink
+that was removed on an already-running box, which wedged the daemon. Using
+udev's own by-path link removes that failure mode entirely.
+
+The fopen race: actkbd opens its device with `fopen("a+")` (linux.c:100),
+which CREATES a regular file if the path does not exist yet. Reading it then
+hits EOF with errno=0, i.e. `Error: failed to read event from ...: Success`.
+So the daemon must never run against a missing node - `ExecStartPre` enforces
+that, and the same warning applies to any manual `actkbd` test run.
 
 The Hyprland `XF86KbdBrightness*` binds previously drafted here are dropped:
 with actkbd reading the device globally, Hyprland binds would double-step.
@@ -67,19 +79,19 @@ git clone https://aur.archlinux.org/paru.git ~/build/paru && cd ~/build/paru && 
 # 2. System packages (actkbd, brightnessctl) from the tracked lists
 ./build/system-packages.sh
 
-# 3. Deploy config + unit + udev rule (starts the service, device-driven)
+# 3. Deploy config + unit (enables and starts the service)
 ./build/system-config.sh
 ```
 
-`system-config.sh` also removes a leftover bogus `/dev/input/actkbd-kbd`
-regular file (see the script comments for the fopen race that creates it) and
-waits for udev (`udevadm settle`) before starting the service.
+`system-config.sh` refuses to start if the by-path symlink is missing (it
+lists `/dev/input/by-path/` for debugging), and it cleans up the stale
+custom-udev-rule version of this setup if one was deployed before.
 
 Verify:
 
 ```sh
 systemctl status actkbd.service
-sudo actkbd -n -s -d /dev/input/actkbd-kbd   # press F5/F6, expect keycodes 229/230
+sudo actkbd -n -s -d /dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd   # press F5/F6, expect keycodes 229/230
 cat /sys/class/leds/smc::kbd_backlight/brightness   # changes on F5/F6
 ```
 

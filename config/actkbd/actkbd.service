@@ -1,19 +1,24 @@
 # Keyboard shortcut daemon for the SMC keyboard backlight (archeus).
 #
-# Replaces the unit shipped by the actkbd AUR package: this one points at the
-# stable udev symlink (70-applespi-actkbd.rules) instead of a boot-order
-# dependent /dev/input/eventN, and stays in the foreground so systemd can
-# track and restart it.
+# Replaces the unit shipped by the actkbd AUR package: this one points at
+# udev's own by-path symlink for the applespi keyboard
+# (/dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd, created by
+# /usr/lib/udev/rules.d/60-persistent-input.rules at every boot) instead of a
+# boot-order dependent /dev/input/eventN.
 #
-# No [Install] section on purpose: the udev rule starts this unit via
-# SYSTEMD_WANTS when the keyboard device appears. Starting it any earlier
-# would race the device - actkbd opens its device with fopen("a+"), which
-# CREATES a regular file if the path is missing yet.
+# actkbd opens its device with fopen("a+"), which CREATES a regular file if
+# the path is missing yet. ExecStartPre therefore waits for the node, so the
+# daemon can never start before the keyboard device exists.
 [Unit]
 Description=actkbd keyboard shortcut daemon
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/actkbd -q -d /dev/input/actkbd-kbd -c /etc/actkbd.conf
+TimeoutStartSec=30
+ExecStartPre=/bin/sh -c 'until [ -e /dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd ]; do sleep 0.2; done'
+ExecStart=/usr/bin/actkbd -q -d /dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd -c /etc/actkbd.conf
 Restart=on-failure
 RestartSec=2
+
+[Install]
+WantedBy=multi-user.target
