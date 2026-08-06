@@ -2,8 +2,9 @@
 
 ## Purpose
 
-Companion to `docs/spi/arch-setup-spi-mac.md` (install guide that bakes this
-in) and `docs/macbookpro12-1-keyboard-issue.md` (the full investigation).
+Companion to `docs/arch-setup-mac.md` (install guide that bakes this in,
+with the full investigation) and
+`docs/macbookpro12-1-keyboard-kernel-patch.md` (the local kernel patch).
 This document explains why the internal keyboard/trackpad die under Linux on
 this 2015 13" MacBook Pro, documents the two-part fix, and gives a cheap
 runtime test to prove it works before making it permanent.
@@ -109,7 +110,7 @@ diagnosis, but the test above is what confirms it.
 
 ## Making it permanent (fresh install)
 
-Follow `docs/spi/arch-setup-spi-mac.md`. In summary, four config pieces plus
+Follow `docs/arch-setup-mac.md`. In summary, four config pieces plus
 an initramfs rebuild:
 
 1. `pacman -S acpi_call-dkms`
@@ -225,6 +226,11 @@ Then `mkinitcpio -P`. Keep the `dw_dmac` blacklist either way.
   udev `power/control=on` rule (step 4) sidesteps it by never letting the
   SPI controller autosuspend. Long-term, a kernel with the upstream series
   removes the need for that rule.
+- **Sleep/wake.** Deep sleep (S3) also kills the keyboard/trackpad until
+  reboot - a separate bug (LPSS private registers reset, never restored).
+  Either sleep with s2idle or apply the local
+  `build/0002-spi-pxa2xx-lpss-s3-resume.patch`. See
+  [macbookpro12-1-keyboard-s3-resume.md](macbookpro12-1-keyboard-s3-resume.md).
 - **If `dw_dmac_pci` is built into the kernel** (`grep -c dw_dmac_pci
   /usr/lib/modules/*/modules.builtin` prints 1), the blacklist cannot
   remove it. Fall back to the

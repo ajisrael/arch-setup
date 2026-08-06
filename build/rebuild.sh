@@ -4,12 +4,15 @@
 # Run as your normal user (sudo is used for pacman -U). Safe to re-run;
 # use it every time the `linux` package version bumps (~monthly).
 #
-# See docs/spi/macbookpro12-1-keyboard-kernel-patch.md for the full story.
+# See docs/macbookpro12-1-keyboard-kernel-patch.md for the full story.
 
 set -euo pipefail
 cd "$(dirname "$0")"
 
-PATCH=0001-spi-pxa2xx-macbookpro12-1-pio.patch
+PATCHES=(
+  0001-spi-pxa2xx-macbookpro12-1-pio.patch
+  0002-spi-pxa2xx-lpss-s3-resume.patch
+)
 REPO=https://gitlab.archlinux.org/archlinux/packaging/packages/linux.git
 
 if [[ ! -d linux/.git ]]; then
@@ -17,10 +20,14 @@ if [[ ! -d linux/.git ]]; then
 fi
 git -C linux pull --ff-only
 git -C linux checkout -- PKGBUILD              # discard last run's edits
-cp "$PATCH" linux/
+for patch in "${PATCHES[@]}"; do
+  cp "$patch" linux/
+done
 
 cd linux
-grep -q "$PATCH" PKGBUILD || sed -i "/^source=(/a\\  \"$PATCH\"" PKGBUILD
+for patch in "${PATCHES[@]}"; do
+  grep -q "$patch" PKGBUILD || sed -i "/^source=(/a\\  \"$patch\"" PKGBUILD
+done
 sed -i -E 's/^pkgrel=([0-9]+)$/pkgrel=\1.1/' PKGBUILD   # 2 -> 2.1, marks it local
 updpkgsums
 
@@ -38,7 +45,7 @@ for key in $(sed -n '/^validpgpkeys=(/,/^)/p' PKGBUILD | grep -oE '[0-9A-F]{40}'
 done
 
 # If `patch -Np1` fails inside prepare() (hunk offsets drifted after a
-# kernel bump), rebase the DMI quirk against the new tree and re-run.
+# kernel bump), rebase the local patches against the new tree and re-run.
 # -j$(nproc) parallelizes the build (Arch's default makepkg.conf leaves
 # MAKEFLAGS unset, which would otherwise build with a single job).
 # One glob covers linux, linux-headers and linux-docs; the old second

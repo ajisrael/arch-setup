@@ -1,7 +1,7 @@
 # MacBookPro12,1 Keyboard Fix - Local Kernel Patch (DMI Forced-PIO)
 
-Companion to `docs/spi/arch-setup-spi-mac.md` and
-`docs/spi/macbookpro12-1-keyboard-spi-fix.md`. You only need this when the
+Companion to `docs/arch-setup-mac.md`, `docs/macbookpro12-1-keyboard-spi-fix.md`,
+and `docs/macbookpro12-1-keyboard-s3-resume.md`. You only need this when the
 userland blacklist cannot work.
 
 ## When you need this
@@ -232,13 +232,15 @@ trackpad should work at GRUB, at the LUKS prompt, and in the booted system.
 
 ### Optional: port the full upstream series instead
 
-If you prefer, port Shih-Yuan Lee's 7-patch series and add the
-`MacBookPro12,1` entry to its DMI table. That additionally locks out runtime
-autosuspend in PIO mode (dropping the udev rule) and restores the LPSS
-private registers across S3 resume (fixing suspend/resume, which the stock
-kernel gets wrong when EFI holds the block in reset). Larger maintenance
-burden; the minimal patch above plus the udev rule is the equivalent for
-everything except S3.
+Shih-Yuan Lee's upstream series (v16) covers three things beyond this DMI
+quirk: the LPSS S3-resume register restore (covered locally by
+`build/0002-spi-pxa2xx-lpss-s3-resume.patch`, see
+[docs/macbookpro12-1-keyboard-s3-resume.md](macbookpro12-1-keyboard-s3-resume.md)),
+a runtime-autosuspend lockout in PIO mode (would let you drop the udev
+rule), and clock/PM refactors. Porting the full series and adding the
+`MacBookPro12,1` entry to its DMI table removes the last stopgap (the udev
+rule) at a larger maintenance burden; the two local patches plus the udev
+rule are the equivalent otherwise.
 
 ## Keeping up with kernel updates
 
@@ -252,10 +254,11 @@ IgnorePkg = linux linux-headers linux-docs
 Then, each time a new `linux` version lands, redo steps 1-5 above (refresh
 the packaging tree, confirm the patch still applies, bump `pkgrel`,
 rebuild), and `pacman -U` the new packages. `build/rebuild.sh` in this repo
-automates exactly that loop (clone/pull, reset, re-apply the patch, bump
-`pkgrel`, `updpkgsums`, `makepkg`, install) - drop it next to a copy of
-`build/0001-spi-pxa2xx-macbookpro12-1-pio.patch` in a dedicated directory
-(e.g. `~/build/linux/`) and run it once per release.
+automates exactly that loop (clone/pull, reset, re-apply the patches, bump
+`pkgrel`, `updpkgsums`, `makepkg`, install). `build/setup-patch.sh` copies
+`rebuild.sh` and both patches into a dedicated directory on this system
+(default `~/build/linux/`) - run it once, then `~/build/linux/rebuild.sh`
+after each kernel bump.
 
 ## References
 

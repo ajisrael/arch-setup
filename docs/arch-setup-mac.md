@@ -508,13 +508,16 @@ changed by this variant:
 HOOKS=(base systemd autodetect microcode modconf kms keyboard sd-vconsole block sd-encrypt filesystems fsck)
 ```
 
-TODO: Wrap this note in a dropdown.
-Why `MODULES=`, not HOOKS: the `keyboard` hook only bundles the USB/serio
-HID modules, not the SPI stack - so the SPI modules must be pulled in via
-`MODULES=`. The `modconf` hook (already in HOOKS) is what carries
-`/etc/modprobe.d` into the image; that is how the `dw_dmac` blacklist and
-the `applespi` `SIEN(1)` reroute apply inside the initramfs, before the
-LUKS prompt.
+<details>
+<summary>Why <code>MODULES=</code>, not HOOKS</summary>
+
+The `keyboard` hook only bundles the USB/serio HID modules, not the SPI
+stack - so the SPI modules must be pulled in via `MODULES=`. The `modconf`
+hook (already in HOOKS) is what carries `/etc/modprobe.d` into the image;
+that is how the `dw_dmac` blacklist and the `applespi` `SIEN(1)` reroute
+apply inside the initramfs, before the LUKS prompt.
+
+</details>
 
 Rebuild initramfs images.
 
@@ -723,6 +726,32 @@ This variant and its fixes are MacBookPro12,1-specific. On other models:
   here are not needed.
 - MacBookPro11,x (2013-15 15", no Touch Bar) wire it as plain internal USB
   and need no SPI handling at all.
+
+### Sleep/wake: keyboard and trackpad dead after resume
+
+Suspend-and-wake is a separate failure from the boot-time fix above: deep
+sleep (S3) removes the LPSS power domain, resetting the SPI controller's
+private registers, and `spi-pxa2xx` does not restore them - after wake the
+block sits in reset and `applespi` loops on `SPI transfer timed out` /
+`-110`. Reloading the modules does not help; only a reboot does. Full
+explanation and options:
+[docs/macbookpro12-1-keyboard-s3-resume.md](macbookpro12-1-keyboard-s3-resume.md).
+
+Quick fix - sleep with s2idle instead of deep sleep (keeps the LPSS domain
+powered, keyboard survives wake):
+
+```bash
+sudo tee /etc/tmpfiles.d/sleep-mode.conf > /dev/null <<'EOF'
+w /sys/power/mem_sleep - - - - s2idle
+EOF
+```
+
+Reboot, then confirm: `cat /sys/power/mem_sleep` -> `[s2idle] deep`.
+
+Permanent fix - the local kernel patch `build/0002-spi-pxa2xx-lpss-s3-resume.patch`
+restores the LPSS private registers on resume, so deep sleep works again.
+Apply it with `./build/rebuild.sh` (rebuilds the kernel with both local
+patches), then remove the s2idle override above.
 
 ---
 
