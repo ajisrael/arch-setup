@@ -56,7 +56,7 @@ __p_fg() { # $1=color name -> SGR color fragment (truecolor or 256-color)
 __p_wrap() { # $1=color $2=text [$3=bold]
   local bold=''
   [[ -n ${3:-} ]] && bold=';1'
-  printf '%s%s%s%s%s%s' '\[\e[' "$(__p_fg "$1")" "$bold" '\]' "$2" '\[\e[0m\]'
+  printf '%s%s%s%s%s%s' '\[\e[' "$(__p_fg "$1")" "$bold" 'm\]' "$2" '\[\e[0m\]'
 }
 
 # raw codes: for the RIGHT side, which sits inside one \[ \] block anyway.
@@ -177,7 +177,7 @@ __p_git() { # branch + ahead/behind + dirty/staged/untracked marks, one git call
     fi
   fi
   if [[ -n $__p_git_branch ]]; then
-    __p_vcs="$(__p_wrap "$__p_git_fg" "${G_BRANCH} ${__p_git_branch}${__p_git_marks}")"
+    __p_vcs="$(__p_wrap "$__p_git_fg" " ${G_BRANCH}${G_BRANCH:+ }${__p_git_branch}${__p_git_marks}")"
   fi
 }
 
@@ -260,17 +260,20 @@ __p_ps1() {
   left+="$(__p_os)"
   [[ -n $left ]] && left+=' '
   left+="$(__p_dir)"
-  [[ -n $__p_vcs ]] && left+=" $__p_vcs"
+  left+="$__p_vcs"
 
   local prompt_char="$(__p_wrap yellow "$G_CHEVRON")"
 
-  # right-align via absolute column (works on tty1 too; overwrites on overlap,
-  # which mirrors p10k hiding the right side when they collide)
+  # right-align via absolute column, then \r back to column 0 for the left side
+  # (overwrites the right side on overlap, mirroring p10k hiding it on
+  # collision). \r is used rather than DECSC/DECRC cursor save/restore - the
+  # simplest thing that works in every terminal. Autowrap is toggled off while
+  # printing the right side so it can't trigger a wrap-pending at the margin.
   local rp_len=${#plain}
   local pad=$(( ${COLUMNS:-80} - rp_len ))
   (( pad < 1 )) && pad=1
 
-  PS1="\n\[\e7\e[?7l\e[${pad}G\]\[${right}\]\[\e[?7h\e8\]${left}\e[0m\n${prompt_char}\e[0m "
+  PS1="\n\[\e[?7l\e[${pad}G\]\[${right}\]\[\e[?7h\r\]${left}\e[0m\n${prompt_char}\e[0m "
 }
 
 PROMPT_COMMAND=__p_ps1
