@@ -31,3 +31,15 @@ is no `nix-users` group, and any local user can use the daemon. The full
 working setup is encoded in `bootstrap.sh` - read its comments before
 changing anything around the daemon, and keep the scripts as the source of
 truth for the install sequence.
+
+## home-manager SSH gotchas
+
+- `programs.ssh.matchBlocks` is deprecated on current master - use
+  `programs.ssh.settings` (attribute names become `Host` blocks, directives
+  use OpenSSH names like `IdentityFile`, booleans render as yes/no).
+- Setting `programs.ssh.enableDefaultConfig = false` silences the
+  "default values will be removed" warning; replicate the defaults at
+  `settings."*"` (the module help text has the exact snippet).
+- `programs.ssh` owns `~/.ssh/config` and will refuse to overwrite a
+  pre-existing hand-written file - set `home.file.".ssh/config".force = true`
+  inside the existing `home.file` attrset to clobber it.

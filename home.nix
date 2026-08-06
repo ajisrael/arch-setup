@@ -18,13 +18,29 @@
 
   # Key is named ~/.ssh/github (not a default identity file), so pin it to the
   # host - otherwise ssh only offers it when it is loaded into the agent.
+  # enableDefaultConfig = false keeps home-manager from injecting its own
+  # defaults; the "Host *" block below replicates them explicitly.
   programs.ssh = {
     enable = true;
-    matchBlocks = {
+    enableDefaultConfig = false;
+    settings = {
+      "*" = {
+        ForwardAgent = false;
+        AddKeysToAgent = "no";
+        Compression = false;
+        ServerAliveInterval = 0;
+        ServerAliveCountMax = 3;
+        HashKnownHosts = false;
+        UserKnownHostsFile = "~/.ssh/known_hosts";
+        ControlMaster = "no";
+        ControlPath = "~/.ssh/master-%r@%n:%p";
+        ControlPersist = "no";
+      };
       "github.com" = {
-        user = "git";
-        identityFile = [ "~/.ssh/github" ];
-        identitiesOnly = true;
+        HostName = "github.com";
+        User = "git";
+        IdentityFile = "~/.ssh/github";
+        IdentitiesOnly = true;
       };
     };
   };
@@ -38,6 +54,7 @@
     link = path:
       config.lib.file.mkOutOfStoreSymlink "${repo}/config/${path}";
   in {
+    ".ssh/config".force = true; # programs.ssh generates it; clobber the pre-flake file
     ".config/hypr/hyprland.lua" = {
       source = link "hypr/hyprland.lua";
       force = true; # clobbers the auto-generated config from the first start-hyprland
