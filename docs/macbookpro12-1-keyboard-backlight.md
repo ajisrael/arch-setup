@@ -97,7 +97,10 @@ repo-managed):
    `MODULES=(...)`, append it there - `MODULES=(acpi_call spi_pxa2xx_platform
    spi_pxa2xx_pci applespi applesmc)`. If the `apple-spi` install hook is used
    instead (`MODULES=()`), add `applesmc` to that hook's `add_module`.
-2. Rebuild the image: `sudo mkinitcpio -P`
+2. The image itself is rebuilt automatically: `build/system-config.sh` compares
+   each `config/modprobe.d/*.conf` against its `/etc/modprobe.d/` copy and runs
+   `sudo mkinitcpio -P` only when something changed (backing up the previous
+   images to `/var/backup/initramfs-pre-modprobe` first).
 
 ## Screen brightness keys (F1/F2)
 
@@ -123,11 +126,12 @@ git clone https://aur.archlinux.org/paru.git ~/build/paru && cd ~/build/paru && 
 # 2. System packages (actkbd, brightnessctl) from the tracked lists
 ./build/system-packages.sh
 
-# 3. Deploy config + unit + modprobe.d boot floor
+# 3. Deploy config + unit + modprobe.d boot floor (rebuilds the initramfs
+#    itself when the boot floor changed)
 ./build/system-config.sh
 
-# 4. Bundle the boot floor into the initramfs (LUKS-prompt backlight), after
-#    adding applesmc to MODULES= - see "Backlight at the LUKS prompt"
+# 4. (Only needed on first setup) after adding applesmc to MODULES= - see
+#    "Backlight at the LUKS prompt"
 sudo mkinitcpio -P
 ```
 

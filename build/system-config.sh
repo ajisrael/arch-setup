@@ -5,7 +5,8 @@
 # are versioned in config/ and copied here. Currently handles:
 #   - config/actkbd/     the keyboard backlight hotkey daemon
 #   - config/modprobe.d/ modprobe.d install reroutes (backlight boot floor for
-#                        the LUKS prompt; modconf bundles these into the image)
+#                        the LUKS prompt; modconf bundles these into the image,
+#                        which is rebuilt automatically when they change)
 # Extend as more system config moves into the repo (udev rules, tmpfiles,
 # pacman.conf).
 set -euo pipefail
@@ -20,11 +21,31 @@ sudo install -Dm644 "$SRC/actkbd.service" /etc/systemd/system/actkbd.service
 sudo install -Dm755 "$SRC/kbd-backlight-step" /usr/local/bin/kbd-backlight-step
 
 # Deploy every modprobe.d file from config/modprobe.d/. They must live in
-# /etc/modprobe.d for the modconf initramfs hook to bundle them.
+# /etc/modprobe.d for the modconf initramfs hook to bundle them. Track whether
+# any file actually changed, so the initramfs is only rebuilt when needed.
+MODPROBE_CHANGED=0
 for conf in "$MODPROBE_SRC"/*.conf; do
     [ -e "$conf" ] || continue
-    sudo install -Dm644 "$conf" "/etc/modprobe.d/$(basename "$conf")"
+    dest="/etc/modprobe.d/$(basename "$conf")"
+    cmp -s "$conf" "$dest" || MODPROBE_CHANGED=1
+    sudo install -Dm644 "$conf" "$dest"
 done
+
+# Rebuild the initramfs when a modprobe.d file changed, so the boot-floor
+# reroute inside the image matches /etc. mkinitcpio builds to a temp file and
+# atomically replaces the image only on success, so a failed build cannot
+# clobber a working one. Keep a copy of the previous images regardless.
+if [ "$MODPROBE_CHANGED" = 1 ]; then
+    BACKUP_DIR="/var/backup/initramfs-pre-modprobe"
+    sudo mkdir -p "$BACKUP_DIR"
+    stamp="$(date +%Y%m%d-%H%M%S)"
+    for img in /boot/initramfs-*.img; do
+        [ -e "$img" ] || continue
+        sudo cp -a "$img" "$BACKUP_DIR/$(basename "$img").$stamp"
+    done
+    echo "==> modprobe.d changed; rebuilding initramfs (previous images in $BACKUP_DIR)"
+    sudo mkinitcpio -P
+fi
 
 sudo systemctl daemon-reload
 
@@ -52,4 +73,4 @@ sudo systemctl restart actkbd.service
 echo "==> actkbd deployed. Enabled unit points at udev's own by-path symlink:"
 echo "    $KBD_DEV"
 echo "    Verify keycodes with:  sudo actkbd -n -s -d $KBD_DEV"
-echo "==> modprobe.d config deployed to /etc/modprobe.d/ (rebuild initramfs to bundle it)"
+echo "==> modprobe.d deployed; initramfs $( [ "$MODPROBE_CHANGED" = 1 ] && echo 'rebuilt' || echo 'already current' )"
