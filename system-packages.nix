@@ -11,6 +11,11 @@
 # Install with build/system-packages.sh. Reconcile this list against the box
 # with `pacman -Qqen` (native) and `pacman -Qqem` (AUR).
 # Seeded from archeus `pacman -Qqen` on 2026-08-06.
+#
+# The kernel (linux/linux-headers/linux-docs) is intentionally NOT listed:
+# archeus runs a locally-rebuilt patched kernel that pacman must never
+# overwrite (IgnorePkg in /etc/pacman.conf). A fresh install installs them as
+# part of the patch workflow in docs/macbookpro12-1-keyboard-kernel-patch.md.
 {
   systemPackages = [
     # Base / boot
@@ -22,9 +27,6 @@
     "intel-ucode"
     "btrfs-progs"
     "cryptsetup"
-    "linux"
-    "linux-docs"
-    "linux-headers"
     "linux-firmware"
     # Kernel build / ACPI helpers
     "git"
