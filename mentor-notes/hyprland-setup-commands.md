@@ -115,7 +115,9 @@ paths), symlinked into `~/.config` via `home.file` +
   autostart block (`hyprland.start`) launches hyprpaper, waybar, mako,
   hyprpolkitagent, `wl-paste --watch cliphist store`; hypridle commented out
   until a hypridle.conf exists. Added binds: Super+L -> hyprlock,
-  Super+Shift+S -> `grim -g "$(slurp)" - | swappy -f -`. Brightness keys use
+  Print -> `grim -g "$(slurp)" - | swappy -f -` (moved off Super+Shift+S -
+  the template already binds that to move-to-scratchpad; the duplicate would
+  have shadowed the screenshot bind). Brightness keys use
   plain `brightnessctl set ±5%` (template's `-e4 -n2` flags are not standard).
   Removed playerctl media-key binds (playerctl not installed).
   touchpad natural_scroll = true (MacBook user).
@@ -123,11 +125,15 @@ paths), symlinked into `~/.config` via `home.file` +
   `config/waybar/config.jsonc` + `style.css`, `config/hypr/hyprlock.conf`,
   `config/hypr/hyprpaper.conf`.
 - Fonts prerequisite (pacman): `ttf-jetbrains-mono-nerd noto-fonts`.
+- **hyprlock gotcha**: no `input-field` block = screen renders but is
+  undeletable (nothing to type into, keyboard dead). Rescue from another TTY
+  (`Ctrl+Alt+F2`, log in, `pkill hyprlock`, back on `Ctrl+Alt+F1`). Config
+  always needs an `input-field` block.
 - Wallpaper image goes at `config/wallpapers/current.jpg` (referenced by both
   hyprpaper.conf and hyprlock.conf).
 
 Verify on box: waybar top bar, wallpaper, Super+Q kitty, Super+R wofi,
-Super+L hyprlock, Super+Shift+S screenshot, Super+M exit. Restart Hyprland
+Super+L hyprlock, Print screenshot, Super+M exit. Restart Hyprland
 fully after the switch - autostarts only fire on start.
 
 ## WRAP-UP checkpoints (after configs)
