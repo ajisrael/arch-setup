@@ -11,17 +11,17 @@ work inside Hyprland after a binding is added). The fix is a **system-level**
 Because it reads evdev globally, it works at tty1, at the login prompt, and
 inside Hyprland alike - no per-desktop binding needed.
 
-## Why the screen keys work at tty1 but the keyboard keys do not
+## Why the brightness keys only work inside Hyprland
 
-- Screen-brightness keys are handled **in the kernel**: the ACPI video driver
-  (`drivers/acpi/acpi_video.c`) installs a notify handler for
-  `ACPI_VIDEO_NOTIFY_INC/DEC_BRIGHTNESS` and adjusts the backlight itself, so
-  no userspace is involved at any level.
-- Keyboard-brightness keys are only **events**: `applespi`
-  (`drivers/input/keyboard/applespi.c:483-484`) maps F5/F6 to
-  `KEY_KBDILLUMDOWN` (229) / `KEY_KBDILLUMUP` (230), and nothing in the kernel
-  consumes those codes. They die at the console unless a userspace daemon
-  reads the evdev device.
+On this MacBook all top-row function keys are routed through the SPI keyboard
+controller (`applespi`): F1/F2 -> `KEY_BRIGHTNESSDOWN`/`KEY_BRIGHTNESSUP`
+(applespi.c:479-480), F5/F6 -> `KEY_KBDILLUMDOWN`/`KEY_KBDILLUMUP`
+(applespi.c:483-484). Every one of them is a plain evdev event with no
+in-kernel consumer - so at a bare tty1 nothing reacts to any of them. Inside
+Hyprland the screen keys work only because `config/hypr/hyprland.lua` binds
+`XF86MonBrightnessUp/Down` to `brightnessctl` (lines 220-221); nothing binds
+the keyboard keys. (The kernel's ACPI-video notify handler that makes screen
+keys work at the console on other laptops does not fire on this hardware.)
 
 ## Findings
 
@@ -47,10 +47,12 @@ Files under `config/actkbd/`, deployed to `/etc` by `build/system-config.sh`:
 - `actkbd.conf` - binds 229 (`F5`, down) and 230 (`F6`, up) to
   `kbd-backlight-step`.
 - `kbd-backlight-step` - steps `smc::kbd_backlight` by ~10% via sysfs.
-- `actkbd.service` - systemd unit pointing at the stable device symlink.
+- `actkbd.service` - systemd unit pointing at the stable device symlink. No
+  `[Install]` section: it is started by udev (`SYSTEMD_WANTS`) when the
+  keyboard device appears, so it can never race the device node.
 - `70-applespi-actkbd.rules` - udev rule creating `/dev/input/actkbd-kbd`
   (a symlink to the applespi keyboard event node, so the unit does not depend
-  on boot-order-dependent `/dev/input/eventN`).
+  on boot-order-dependent `/dev/input/eventN`) and starting the service.
 
 The Hyprland `XF86KbdBrightness*` binds previously drafted here are dropped:
 with actkbd reading the device globally, Hyprland binds would double-step.
@@ -65,9 +67,13 @@ git clone https://aur.archlinux.org/paru.git ~/build/paru && cd ~/build/paru && 
 # 2. System packages (actkbd, brightnessctl) from the tracked lists
 ./build/system-packages.sh
 
-# 3. Deploy actkbd config + unit + udev rule, enable + start the service
+# 3. Deploy config + unit + udev rule (starts the service, device-driven)
 ./build/system-config.sh
 ```
+
+`system-config.sh` also removes a leftover bogus `/dev/input/actkbd-kbd`
+regular file (see the script comments for the fopen race that creates it) and
+waits for udev (`udevadm settle`) before starting the service.
 
 Verify:
 
@@ -87,7 +93,8 @@ Caveat: after boot the LED core cache starts at 0, so the first F6 press sets
 - `drivers/hwmon/applesmc.c` (mainline): `smc::kbd_backlight`, `LKSB` key,
   `brightness_set`-only LED classdev.
 - `drivers/acpi/acpi_video.c` (mainline): native screen-brightness notify
-  handling (why the screen keys work without userspace).
+  handling - does NOT fire on this hardware, which is why no top-row key works
+  at a bare console.
 - `include/uapi/linux/input-event-codes.h`: `KEY_KBDILLUMDOWN=229`,
   `KEY_KBDILLUMUP=230`.
 - actkbd upstream README: <https://github.com/thkala/actkbd> (config format,

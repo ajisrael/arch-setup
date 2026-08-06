@@ -4,15 +4,16 @@
 # stable udev symlink (70-applespi-actkbd.rules) instead of a boot-order
 # dependent /dev/input/eventN, and stays in the foreground so systemd can
 # track and restart it.
+#
+# No [Install] section on purpose: the udev rule starts this unit via
+# SYSTEMD_WANTS when the keyboard device appears. Starting it any earlier
+# would race the device - actkbd opens its device with fopen("a+"), which
+# CREATES a regular file if the path is missing yet.
 [Unit]
 Description=actkbd keyboard shortcut daemon
-After=systemd-udevd.service
 
 [Service]
 Type=simple
 ExecStart=/usr/bin/actkbd -q -d /dev/input/actkbd-kbd -c /etc/actkbd.conf
 Restart=on-failure
 RestartSec=2
-
-[Install]
-WantedBy=multi-user.target
