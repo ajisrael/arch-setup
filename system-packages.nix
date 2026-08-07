@@ -85,6 +85,9 @@
     "brightnessctl"
     # Archives
     "unzip"
+    # Ops / provisioning - ansible ships ansible-vault, used to decrypt the
+    # MCP server secrets (see docs/opencode-secrets.md).
+    "ansible"
     # Language toolchains - mason.nvim builds gopls from source (needs go) and
     # installs pyright, html-lsp and typescript-language-server via npm
     # (nodejs + npm); without these those LSP installs fail in nvim.
