@@ -6,5 +6,4 @@ vim .
 ---
 lazygit
 ---
-source setup-claude.sh
-claude
+opencode

@@ -11,11 +11,7 @@ apply_session_config() {
 	# the last window) since that's the assistant used there.
 	local config_file="$dir/.tmux-sessionizer-config"
 	if [[ ! -f "$config_file" ]]; then
-		if [[ "$dir" == "$HOME/learning"/* || "$dir" == "$HOME/learning" ]]; then
-			config_file="$script_dir/.default-tmux-sessionizer-config-learning"
-		else
-			config_file="$script_dir/.default-tmux-sessionizer-config"
-		fi
+		config_file="$script_dir/.default-tmux-sessionizer-config"
 	fi
 
 	[[ ! -f "$config_file" ]] && return
