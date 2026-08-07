@@ -100,6 +100,10 @@ tooltip label {
   color: #7dcfff; /* Piplup/Squirtle cyan */
 }
 
+#network.disconnected {
+  color: #565f89; /* icy muted - no link, no need to shout about it */
+}
+
 #cpu:hover,
 #memory:hover {
   background: rgba(41, 46, 66, 0.9);

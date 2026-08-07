@@ -13,21 +13,21 @@
     "format": "{name}"
   },
   "clock": {
-    "format": "{:%a %d %b  %H:%M}",
-    "tooltip-format": "{:%Y-%m-%d %H:%M}"
+    "format": "{:%H:%M}",
+    "tooltip-format": "{:%a %d %b %Y}"
   },
-  "cpu": { "format": "\uf2db {usage}%" },
+  "cpu": {
+    "format": "\uf2db {usage}%",
+    "tooltip-format": "{usage}%  {avg_frequency} GHz"
+  },
   "memory": { "format": "\uf85a {percentage}%" },
   "network": {
-    "format-wifi": "{icon} {essid}",
-    "format-ethernet": "{icon} {ifname}",
-    "format-disconnected": "{icon} off",
-    "format-icons": {
-      "wifi": ["\uf1eb"],
-      "ethernet": ["\uf1e6"],
-      "disconnected": ["\uf1eb"]
-    },
-    "tooltip-format": "{ifname}: {ipaddr}"
+    "format-wifi": "\uf1eb {signalStrength}",
+    "format-ethernet": "\uf1e6",
+    "format-disconnected": "\uf1eb",
+    "tooltip-format-wifi": "{essid}  {signalStrength}% ({signaldBm} dBm)\n{ipaddr}",
+    "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
+    "tooltip-format-disconnected": "Disconnected"
   },
   "backlight": {
     "format": "\ufa98 {percent}%",
@@ -35,12 +35,13 @@
     "on-click-right": "brightnessctl set 5%-"
   },
   "pulseaudio": {
-    "format": "{icon} {volume}%",
-    "format-muted": "{icon} muted",
+    "format": "{icon}",
+    "format-muted": "{icon}",
     "format-icons": {
       "default": ["\uf027", "\uf028"],
       "muted": ["\uf026"]
     },
+    "tooltip-format": "{volume}%  {desc}",
     "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
   },
   "battery": {
@@ -50,12 +51,12 @@
       "warning": 20,
       "critical": 10
     },
-    "format": "{icon} {capacity}%",
+    "format": "{icon}",
     "format-icons": ["\uf579", "\uf57b", "\uf57d", "\uf57f", "\uf581"],
-    "format-charging": "\uf06d {capacity}%",
-    "format-plugged": "\ufba3 {capacity}%",
-    "format-warning": "\uf582 {capacity}%",
-    "format-critical": "\uf582 {capacity}%",
+    "format-charging": "\uf06d",
+    "format-plugged": "\ufba3",
+    "format-warning": "\uf582",
+    "format-critical": "\uf582",
     "format-time": "{H}:{m}",
     "tooltip-format": "{capacity}%  {time}"
   },
