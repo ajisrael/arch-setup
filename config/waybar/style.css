@@ -80,7 +80,6 @@ tooltip label {
 #network,
 #backlight,
 #pulseaudio,
-#bluetooth,
 #battery {
   background: rgba(36, 40, 59, 0.6);
   border-radius: 10px;
@@ -96,8 +95,7 @@ tooltip label {
 }
 
 #network:hover,
-#pulseaudio:hover,
-#bluetooth:hover {
+#pulseaudio:hover {
   background: rgba(41, 46, 66, 0.9);
   color: #7dcfff; /* Piplup/Squirtle cyan */
 }

@@ -7,7 +7,7 @@
   "margin-left": 12,
   "margin-right": 12,
   "modules-left": ["hyprland/workspaces"],
-  "modules-right": ["network", "cpu", "memory", "backlight", "pulseaudio", "bluetooth", "battery", "tray", "clock"],
+  "modules-right": ["network", "cpu", "memory", "backlight", "pulseaudio", "battery", "tray", "clock"],
 
   "hyprland/workspaces": {
     "format": "{name}"
@@ -42,19 +42,6 @@
       "muted": ["\uf026"]
     },
     "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
-  },
-  "bluetooth": {
-    "format-disabled": "\uf5b1",
-    "format-off": "\uf5b1 off",
-    "format-on": "\uf5ae on",
-    "format-connected": "\uf5af {device_alias}",
-    "format-no-controller": "\uf5b1",
-    "tooltip-format-on": "Bluetooth on",
-    "tooltip-format-off": "Click to enable",
-    "tooltip-format-disabled": "Bluetooth disabled",
-    "tooltip-format-connected": "{device_alias} connected",
-    "on-click": "/home/ajisrael/arch-setup/config/waybar/bluetooth-picker.sh",
-    "on-click-right": "bluetoothctl power toggle"
   },
   "battery": {
     "bat": "BAT0",

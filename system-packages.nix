@@ -76,6 +76,7 @@
     # Bluetooth
     "bluez"
     "bluez-utils"
+    "blueman" # tray applet + manager GUI for connecting/pairing devices
     # Screenshots / tools
     "grim"
     "slurp"

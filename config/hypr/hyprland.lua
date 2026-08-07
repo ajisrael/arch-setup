@@ -29,6 +29,10 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("mako &")
     hl.exec_cmd("hyprpolkitagent &")
     hl.exec_cmd("wl-paste --watch cliphist store &")
+    -- Bluetooth: blueman-applet lives in the waybar tray (click = device
+    -- menu, right-click = full manager). Replaces the old waybar bluetooth
+    -- module + wofi picker script.
+    hl.exec_cmd("blueman-applet &")
     -- Handy speech-to-text daemon. --start-hidden keeps the main window closed
     -- (it lives in the tray; the transcribe toggle is bound in KEYBINDINGS below).
     hl.exec_cmd("handy --start-hidden &")
