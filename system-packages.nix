@@ -44,6 +44,8 @@
     "usbutils"
     "tmux"
     "vim"
+    "neovim"
+    "fzf"
     "less"
     # Display server / desktop
     "hyprland"

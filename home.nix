@@ -47,6 +47,9 @@
 
   home.packages = [ pkgs.hello ];
 
+  # tmux-sessionizer is on PATH so `bind f` (tmux neww tmux-sessionizer) works.
+  home.sessionPath = [ "/home/ajisrael/arch-setup/config/tmux/tmux-scripts" ];
+
   # Live-editable configs: plain files in the repo, symlinked into ~/.config.
   # Editing the file in place is instantly picked up - no re-switch needed.
   home.file = let
@@ -63,6 +66,8 @@
       source = link "bash/bash_profile";
       force = true; # login shells (tty1/ssh) delegate to ~/.bashrc
     };
+    ".tmux.conf".source = link "tmux/tmux.conf";
+    ".config/nvim".source = link "nvim"; # git submodule -> kickstart.nvim fork
     ".config/hypr/hyprland.lua" = {
       source = link "hypr/hyprland.lua";
       force = true; # clobbers the auto-generated config from the first start-hyprland
