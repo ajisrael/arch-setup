@@ -79,9 +79,11 @@ home-manager is user-scope only - it cannot install root packages or write
   declarative, NOT version-pinned - versions float with `pacman -Syu`.
 - **Root config files**: versioned under `config/<tool>/`, deployed to `/etc`
   with `build/system-config.sh`. Currently `config/actkbd/` (keyboard-backlight
-  hotkey daemon) and `config/modprobe.d/` (install reroutes: re-assert the
+  hotkey daemon), `config/modprobe.d/` (install reroutes: re-assert the
   `smc::kbd_backlight` floor after applesmc loads for the LUKS prompt, and set
-  `intel_backlight` to 50% after i915 loads in the booted system).
+  `intel_backlight` to 50% after i915 loads in the booted system), and
+  `config/grub.d/` (GRUB menu scripts, deployed to `/etc/grub.d/`; the script
+  regenerates `grub.cfg` when any of them change).
   Extend that script rather than hand-editing `/etc`. `modprobe.d` files
   deployed to `/etc/modprobe.d/` get bundled into the initramfs automatically
   by the `modconf` initramfs hook on `mkinitcpio -P` (the script rebuilds the
@@ -90,4 +92,32 @@ home-manager is user-scope only - it cannot install root packages or write
   that worked in the booted system never fired there); use a modprobe.d
   reroute.
 - AUR helper on archeus is `paru`; keep it that way (scripts reference it).
+
+## btrfs snapshots are the rollback safety net
+
+Root-level state that git does NOT cover: untracked `/etc` (fstab, mkinitcpio,
+grub, pacman.conf, LUKS UUIDs), pacman package *versions* (the package list in
+`system-packages.nix` is unpinned), and untracked home data. The btrfs
+snapshot flow protects all of it:
+
+- `build/snapshot.sh [--home] [--keep N] [--label LABEL]` - snapshots the root
+  subvolume `@` into `/.snapshots/` (a dedicated subvolume), regenerates the
+  GRUB menu, prunes to `--keep` (default 5). `--home` also snapshots `@home`
+  as `<name>-home`. Snapshots are created **read-write** deliberately -
+  read-only snapshots can fail to boot (services need a writable root).
+  Run it before a risky change; needs root (self-sudoes).
+- Rollback = reboot into GRUB `Snapshots` submenu (entries emitted by
+  `config/grub.d/40-snapshots`; linux line rewritten so `subvol=@` ->
+  `subvol=@snapshots/<name>`), verify, then `build/restore.sh <name> [--home]`
+  run *from the snapshot* to promote it: old `@` -> `@.old-<stamp>` (safety
+  net, never auto-deleted), snapshot -> `@`. `restore.sh list` shows
+  snapshots + which is currently booted. restore.sh refuses to run outside a
+  snapshot and refuses a name mismatch (booted vs requested).
+- `config/grub.d/40-snapshots` is deployed by `build/system-config.sh`; the
+  snapshot boot entries only appear after it (and after a snapshot exists).
+  `/boot` is a separate vfat partition, so kernel + initramfs are shared
+  across all entries and a snapshot only replaces the root subvolume.
+- Sequence to remember: snapshot BEFORE the change, reboot into snapshot to
+  verify, `restore.sh <name>` to finalize, reboot again. Old roots stay under
+  `@.old-*`/`@home.old-*` until manually deleted (instructions printed).
 

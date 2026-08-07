@@ -1,0 +1,59 @@
+#!/bin/bash
+# GRUB menu entries for btrfs snapshots in /.snapshots/.
+#
+# Executed by grub-mkconfig (run as root). Emits a "Snapshots" submenu with
+# one entry per snapshot, booting the current kernel with root re-pointed at
+# the snapshot subvolume. /boot is a separate vfat partition, so the kernel
+# and initramfs are shared across all entries and the snapshot only replaces
+# the root subvolume (@ = OS + /etc).
+#
+# Boot lines are copied from the existing grub.cfg (the output of the last
+# grub-mkconfig run, still present while we regenerate), so LUKS UUIDs,
+# rootflags and kernel/initrd paths always match what the system boots with.
+# The only change is subvol=@ -> subvol=@snapshots/<name>.
+#
+# Home snapshots (names ending in -home) are not bootable roots and are
+# skipped. Booting into a snapshot is read-write (snapshots are created
+# writable by build/snapshot.sh) so services work normally.
+set -e
+
+[ -d /.snapshots ] || exit 0
+CFG=/boot/grub/grub.cfg
+[ -r "$CFG" ] || exit 0
+
+SEARCH_LINE=$(grep -m1 'search --no-floppy --fs-uuid' "$CFG")
+LINUX_LINE=$(grep -m1 '^[[:space:]]*linux[[:space:]]' "$CFG")
+INITRD_LINE=$(grep -m1 '^[[:space:]]*initrd[[:space:]]' "$CFG")
+INSMOD_LINES=$(grep '^[[:space:]]*insmod ' "$CFG" | sort -u)
+[ -n "$LINUX_LINE" ] || exit 0
+
+count=0
+for snap in /.snapshots/*/; do
+    [ -d "$snap" ] || continue
+    case "$(basename "$snap")" in *-home) continue ;; esac
+    count=$((count + 1))
+done
+[ "$count" -gt 0 ] || exit 0
+
+cat <<'EOF'
+submenu 'Snapshots' {
+EOF
+for snap in /.snapshots/*/; do
+    [ -d "$snap" ] || continue
+    name=$(basename "$snap")
+    case "$name" in *-home) continue ;; esac
+    linux_line=$(printf '%s\n' "$LINUX_LINE" | sed "s|subvol=@[^ ]*|subvol=@snapshots/$name|g")
+    cat <<EOF
+	menuentry 'Snapshot $name' {
+		$INSMOD_LINES
+		$SEARCH_LINE
+		echo	'Loading Linux from snapshot $name ...'
+		$linux_line
+		echo	'Loading initial ramdisk ...'
+		$INITRD_LINE
+	}
+EOF
+done
+cat <<'EOF'
+}
+EOF

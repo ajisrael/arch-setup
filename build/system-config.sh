@@ -14,6 +14,7 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
 SRC="$DIR/config/actkbd"
 MODPROBE_SRC="$DIR/config/modprobe.d"
+GRUB_SRC="$DIR/config/grub.d"
 KBD_DEV="/dev/input/by-path/pci-0000:00:15.4-cs-00-event-kbd"
 
 sudo install -Dm644 "$SRC/actkbd.conf" /etc/actkbd.conf
@@ -62,6 +63,22 @@ if [ "$REBUILD_INITRAMFS" = 1 ]; then
 fi
 
 sudo systemctl daemon-reload
+
+# Deploy every grub.d script from config/grub.d/ (currently 40-snapshots, the
+# btrfs snapshot boot entries used by build/snapshot.sh). Regenerate the GRUB
+# menu when any script changes.
+GRUB_CHANGED=0
+for grub_script in "$GRUB_SRC"/*; do
+    [ -f "$grub_script" ] || continue
+    dest="/etc/grub.d/$(basename "$grub_script")"
+    cmp -s "$grub_script" "$dest" || GRUB_CHANGED=1
+    sudo install -Dm755 "$grub_script" "$dest"
+done
+
+if [ "$GRUB_CHANGED" = 1 ]; then
+    echo "==> grub.d scripts changed; regenerating GRUB menu"
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+fi
 
 # An earlier version used a custom udev rule + /dev/input/actkbd-kbd symlink.
 # actkbd opens its device with fopen("a+"), which CREATES a regular file if
