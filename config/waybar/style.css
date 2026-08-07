@@ -1,5 +1,5 @@
 * {
-  font-family: "JetBrainsMono Nerd Font";
+  font-family: "MesloLGS NF";
   font-size: 13px;
   border: none;
   border-radius: 0;
@@ -36,4 +36,12 @@ tooltip {
 #tray {
   padding: 0 8px;
   color: #cdd6f4;
+}
+
+#battery.warning {
+  color: #e0af68; /* Tokyo Night yellow */
+}
+
+#battery.critical {
+  color: #f7768e; /* Tokyo Night red */
 }

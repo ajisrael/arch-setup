@@ -33,8 +33,18 @@
     "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
   },
   "battery": {
-    "format": "{capacity}%",
-    "states": { "critical": 15, "warning": 30 }
+    "bat": "BAT0",
+    "interval": 5,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon} {capacity}%",
+    "format-icons": ["\uf240", "\uf241", "\uf242", "\uf243", "\uf244"],
+    "format-charging": "\uf583 {capacity}%",
+    "format-plugged": "\ufba3 {capacity}%",
+    "format-time": "{H}:{m}",
+    "tooltip-format": "{capacity}%  {time}"
   },
   "tray": { "spacing": 8 }
 }
