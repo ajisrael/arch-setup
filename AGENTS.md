@@ -4,12 +4,26 @@ Arch Linux box (`archeus`): Hyprland workstation. The system layer stays
 pacman-managed (see `docs/`); standalone home-manager owns user config
 files and user tools via `flake.nix` + `home.nix`.
 
+zsh is the primary interactive shell (chsh to `/usr/bin/zsh`; `zsh` is in
+`system-packages.nix`). home-manager's `programs.zsh` generates `~/.zshrc`,
+`~/.zshenv`, `~/.zprofile` (classic layout - `xdg.enable` is off, so no
+ZDOTDIR bridge) with oh-my-zsh + Powerlevel10k. The theme comes from
+`pkgs.zsh-powerlevel10k` (omz `custom` points at its share dir so
+`ZSH_THEME="powerlevel10k/powerlevel10k"` resolves); autosuggestions +
+syntax-highlighting come from their own HM modules, not omz plugins. The
+repo-tracked `config/zsh/personal.zsh` and `config/zsh/p10k.zsh` are linked
+to `~/.zshrc.personal` and `~/.p10k.zsh` (`force = true`) and sourced via
+`initContent` mkOrder 500 (p10k instant prompt, early) and 1500
+(`source "$HOME/.zshrc.personal"`, last - it must run after the theme so the
+guarded `p10k reload` in p10k.zsh works). `initExtra`/`initExtraFirst` are
+deprecated on the pinned HM master - use `initContent` + `mkOrder`.
+
 The bash prompt (Tokyo Night, mirrors the macOS Powerlevel10k look) lives in
 `config/bash/` (`bashrc` + `prompt.bashrc`), symlinked to `~/.bashrc` and
-`~/.bash_profile` by home-manager. It renders truecolor + nerd-font glyphs in
-kitty (MesloLGS NF installed via `system-packages.nix` AUR) and degrades to
-256-color + plain glyphs on `TERM=linux` (tty1) automatically - keep that
-mode split intact rather than forcing icons everywhere.
+`~/.bash_profile` by home-manager - a fallback for scripts/tty, kept in the
+256-color + plain glyph mode rather than forcing icons everywhere. tmux
+window names are owned by the zsh preexec/precmd hooks in `personal.zsh`, so
+tmux.conf keeps `automatic-rename off`.
 
 ## The user always runs ./rebuild.sh themselves
 
