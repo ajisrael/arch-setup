@@ -128,5 +128,9 @@
     ".config/wofi/style.css".source = link "wofi/style.css";
     ".config/waybar/config.jsonc".source = link "waybar/config.jsonc";
     ".config/waybar/style.css".source = link "waybar/style.css";
+    # opencode: project-local configs promoted to global user config. Loaded by
+    # opencode on startup; restart opencode after a switch to pick up changes.
+    ".config/opencode/opencode.json".source = link "opencode/opencode.json";
+    ".config/opencode/tui.json".source = link "opencode/tui.json";
   };
 }
