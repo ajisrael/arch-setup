@@ -1,0 +1,49 @@
+/* ============================================================
+ * wofi - Tokyo Night x Pokémon winter (GTK CSS)
+ * Base: #1a1b26 / #24283b / #292e42 | Text: #c0caf5 / #565f89
+ * Campfire accent: #ff9e64 -> #e0af68 | Cyan: #7dcfff
+ * ============================================================ */
+
+window {
+  background-color: rgba(26, 27, 38, 0.92);
+  color: #c0caf5;
+  border: 1px solid rgba(86, 95, 137, 0.8);
+  border-radius: 14px;
+}
+
+outer-box {
+  background-color: transparent;
+  padding: 12px;
+}
+
+input {
+  background-color: rgba(36, 40, 59, 0.8);
+  color: #c0caf5;
+  border: 1px solid rgba(255, 158, 100, 0.5);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+
+input:focus {
+  border-color: #ff9e64;
+}
+
+prompt {
+  color: #565f89;
+}
+
+list {
+  background-color: transparent;
+  margin-top: 8px;
+}
+
+entry {
+  color: #c0caf5;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+entry:selected {
+  background-color: rgba(41, 46, 66, 0.9);
+  color: #7dcfff; /* Piplup/Squirtle cyan highlight on the selected row */
+}

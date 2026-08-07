@@ -125,6 +125,7 @@
     ".config/kitty/kitty.conf".source = link "kitty/kitty.conf";
     ".config/mako/config".source = link "mako/config";
     ".config/wofi/config".source = link "wofi/config";
+    ".config/wofi/style.css".source = link "wofi/style.css";
     ".config/waybar/config.jsonc".source = link "waybar/config.jsonc";
     ".config/waybar/style.css".source = link "waybar/style.css";
   };

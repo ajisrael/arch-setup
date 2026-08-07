@@ -3,3 +3,4 @@ width=600
 height=400
 location=center
 prompt=run:
+theme=/home/ajisrael/.config/wofi/style.css
