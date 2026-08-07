@@ -17,22 +17,31 @@
     "format": "{:%a %d %b  %H:%M}",
     "tooltip-format": "{:%Y-%m-%d %H:%M}"
   },
-  "cpu": { "format": "cpu {usage}%" },
-  "memory": { "format": "mem {percentage}%" },
+  "cpu": { "format": "\uf2db {usage}%" },
+  "memory": { "format": "\uf85a {percentage}%" },
   "network": {
-    "format-wifi": "{essid}",
-    "format-ethernet": "{ifname}",
-    "format-disconnected": "off",
+    "format-wifi": "{icon} {essid}",
+    "format-ethernet": "{icon} {ifname}",
+    "format-disconnected": "{icon} off",
+    "format-icons": {
+      "wifi": ["\uf1eb"],
+      "ethernet": ["\uf1e6"],
+      "disconnected": ["\uf1eb"]
+    },
     "tooltip-format": "{ifname}: {ipaddr}"
   },
   "backlight": {
-    "format": "{percent}%",
+    "format": "\ufa98 {percent}%",
     "on-click": "brightnessctl set +5%",
     "on-click-right": "brightnessctl set 5%-"
   },
   "pulseaudio": {
-    "format": "{volume}%",
-    "format-muted": "muted",
+    "format": "{icon} {volume}%",
+    "format-muted": "{icon} muted",
+    "format-icons": {
+      "default": ["\uf027", "\uf028"],
+      "muted": ["\uf026"]
+    },
     "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
   },
   "battery": {
@@ -43,9 +52,11 @@
       "critical": 10
     },
     "format": "{icon} {capacity}%",
-    "format-icons": ["\uf240", "\uf241", "\uf242", "\uf243", "\uf244"],
-    "format-charging": "\uf583 {capacity}%",
+    "format-icons": ["\uf579", "\uf57b", "\uf57d", "\uf57f", "\uf581"],
+    "format-charging": "\uf06d {capacity}%",
     "format-plugged": "\ufba3 {capacity}%",
+    "format-warning": "\uf582 {capacity}%",
+    "format-critical": "\uf582 {capacity}%",
     "format-time": "{H}:{m}",
     "tooltip-format": "{capacity}%  {time}"
   },
