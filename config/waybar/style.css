@@ -1,3 +1,13 @@
+/* ============================================================
+ * Waybar - Tokyo Night x Pokémon winter
+ * ------------------------------------------------------------
+ * Base: Tokyo Night bg #1a1b26 / surface #24283b / hl #292e42
+ * Text: #c0caf5, muted #565f89
+ * Campfire (active): #ff9e64 (Charmander-orange) -> #e0af68 (Pikachu-yellow)
+ * Pokémon accents: #7dcfff cyan (Squirtle/Piplup), #9ece6a green (Bulbasaur),
+ *                  #bb9af7 purple (lake sky), #f7768e red (Charmander tail)
+ * ============================================================ */
+
 * {
   font-family: "MesloLGS NF";
   font-size: 13px;
@@ -7,41 +17,122 @@
 }
 
 window#waybar {
-  background: rgba(30, 30, 46, 0.85);
-  color: #cdd6f4;
+  background: rgba(26, 27, 38, 0.75); /* translucent Tokyo Night deep indigo */
+  color: #c0caf5;
+  border-radius: 14px;
+  border: 1px solid rgba(86, 95, 137, 0.6); /* icy muted purple hairline */
+  /* margins come from config.jsonc (margin-top/left/right) */
 }
 
 tooltip {
-  background: #1e1e2e;
-  border: 1px solid #45475a;
+  background: rgba(36, 40, 59, 0.95);
+  border: 1px solid #565f89;
+  color: #c0caf5;
+}
+
+tooltip label {
+  color: #c0caf5;
+}
+
+/* ------------------------------------------------------------
+ * Workspaces
+ * Active = warm campfire gradient (dark text pops on it),
+ * inactive = icy muted purple, hover = subtle snow-surface highlight.
+ * ------------------------------------------------------------ */
+#workspaces {
+  background: rgba(36, 40, 59, 0.6);
+  border-radius: 10px;
+  margin: 3px 2px;
+  padding: 0 2px;
 }
 
 #workspaces button {
   padding: 0 8px;
-  color: #6c7086;
+  margin: 2px 2px;
+  border-radius: 8px;
+  color: #565f89;
+  background: transparent;
+  transition: all 0.25s ease-in-out;
+}
+
+#workspaces button:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #a9b1d6;
 }
 
 #workspaces button.active {
-  color: #89b4fa;
-  border-bottom: 2px solid #89b4fa;
+  background: linear-gradient(135deg, #ff9e64, #e0af68);
+  color: #1a1b26;
 }
 
+#workspaces button.urgent {
+  background: linear-gradient(135deg, #f7768e, #ff9e64);
+  color: #1a1b26;
+}
+
+/* ------------------------------------------------------------
+ * Module pills - frosted translucent surfaces that sit inside
+ * the rounded bar; each one gets a Pokémon accent on hover.
+ * ------------------------------------------------------------ */
 #clock,
 #cpu,
 #memory,
 #network,
 #backlight,
 #pulseaudio,
-#battery,
-#tray {
-  padding: 0 8px;
-  color: #cdd6f4;
+#battery {
+  background: rgba(36, 40, 59, 0.6);
+  border-radius: 10px;
+  margin: 3px 2px;
+  padding: 0 10px;
+  color: #c0caf5;
+  transition: all 0.25s ease-in-out;
+}
+
+#clock:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #bb9af7; /* lake-sky purple for the clock, steady under the stars */
+}
+
+#network:hover,
+#pulseaudio:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #7dcfff; /* Piplup/Squirtle cyan */
+}
+
+#cpu:hover,
+#memory:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #9ece6a; /* Bulbasaur green */
+}
+
+#backlight:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #e0af68; /* campfire glow */
+}
+
+#battery {
+  color: #c0caf5;
+}
+
+#battery:hover {
+  background: rgba(41, 46, 66, 0.9);
+  color: #7dcfff;
 }
 
 #battery.warning {
-  color: #e0af68; /* Tokyo Night yellow */
+  color: #e0af68; /* Tokyo Night yellow - nearing the campfire, take shelter */
 }
 
 #battery.critical {
-  color: #f7768e; /* Tokyo Night red */
+  color: #f7768e; /* Tokyo Night red - Charmander's tail, danger */
+}
+
+#tray {
+  margin: 3px 2px;
+  padding: 0 6px;
+}
+
+#tray > .passive {
+  -gtk-icon-effect: dim;
 }
