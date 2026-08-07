@@ -199,12 +199,16 @@ hl.gesture({
 
 local mainMod = "SUPER"
 
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + C", hl.dsp.window.close())
+-- Mac-like bindings: Super+C/V copy/paste, Super+Q quit, Super+T terminal.
+-- Copy/paste synthesize Ctrl+C/Ctrl+V into the focused window via wtype, since
+-- Wayland has no global clipboard shortcut (apps still see their native binding).
+hl.bind(mainMod .. " + Q", hl.dsp.window.close()) -- quit: close the focused window
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("wtype -M ctrl c"))
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("wtype -M ctrl v"))
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu)) -- Spotlight-style app launcher
 -- Speech-to-text toggle (Handy). Wayland forbids apps from grabbing global
 -- hotkeys, so Hyprland owns Alt+Space and tells the background Handy daemon to
 -- start/stop transcribing via its CLI IPC.
