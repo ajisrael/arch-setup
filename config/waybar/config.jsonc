@@ -31,9 +31,9 @@
     "format-ethernet": "\uf1e6",
     "format-disconnected": "{icon}",
     "format-icons": {
-      "wifi": ["\uf091f", "\uf0922", "\uf0925", "\uf0928"],
+      "wifi": ["\udb82\udd1f", "\udb82\udd22", "\udb82\udd25", "\udb82\udd28"],
       "ethernet": ["\uf1e6"],
-      "disconnected": ["\uf092d"]
+      "disconnected": ["\udb82\udd2d"]
     },
     "tooltip-format-wifi": "{essid}  {signalStrength}% ({signaldBm} dBm)\n{ipaddr}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
