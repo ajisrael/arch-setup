@@ -17,20 +17,32 @@
     "tooltip-format": "{:%a %d %b %Y}"
   },
   "cpu": {
-    "format": "\uf2db {usage}%",
+    "format": "\uf2db",
+    "states": { "warm": 50, "hot": 80 },
     "tooltip-format": "{usage}%  {avg_frequency} GHz"
   },
-  "memory": { "format": "\uf85a {percentage}%" },
+  "memory": {
+    "format": "\uf85a",
+    "states": { "warm": 50, "hot": 80 },
+    "tooltip-format": "{percentage}%  ({used:0.1f}G / {total:0.1f}G)"
+  },
   "network": {
-    "format-wifi": "\uf1eb {signalStrength}",
+    "format-wifi": "{icon}",
     "format-ethernet": "\uf1e6",
-    "format-disconnected": "\uf1eb",
+    "format-disconnected": "{icon}",
+    "format-icons": {
+      "wifi": ["\uf091f", "\uf0922", "\uf0925", "\uf0928"],
+      "ethernet": ["\uf1e6"],
+      "disconnected": ["\uf092d"]
+    },
     "tooltip-format-wifi": "{essid}  {signalStrength}% ({signaldBm} dBm)\n{ipaddr}",
     "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
     "tooltip-format-disconnected": "Disconnected"
   },
   "backlight": {
-    "format": "\ufa98 {percent}%",
+    "format": "\ufa98",
+    "states": { "mid": 30, "bright": 60 },
+    "tooltip-format": "{percent}%",
     "on-click": "brightnessctl set +5%",
     "on-click-right": "brightnessctl set 5%-"
   },

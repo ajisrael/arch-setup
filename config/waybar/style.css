@@ -107,12 +107,47 @@ tooltip label {
 #cpu:hover,
 #memory:hover {
   background: rgba(41, 46, 66, 0.9);
-  color: #9ece6a; /* Bulbasaur green */
+  /* color left to the usage-state rules below - the load is the info */
 }
 
 #backlight:hover {
   background: rgba(41, 46, 66, 0.9);
-  color: #e0af68; /* campfire glow */
+  /* color left to the brightness-state rules below */
+}
+
+/* ------------------------------------------------------------
+ * Utilization states (C-1/R-1) - ice -> campfire -> danger.
+ * states.warm=50 / states.hot=80 from config.jsonc add the classes.
+ * ------------------------------------------------------------ */
+#cpu,
+#memory {
+  color: #7dcfff; /* Piplup/Squirtle cyan - cool, low load */
+}
+
+#cpu.warm,
+#memory.warm {
+  color: #e0af68; /* campfire yellow - warming up under load */
+}
+
+#cpu.hot,
+#memory.hot {
+  color: #f7768e; /* Charmander-tail red - maxed out */
+}
+
+/* ------------------------------------------------------------
+ * Backlight states (B-1) - dim grey -> cyan -> bright ice-blue.
+ * states.mid=30 / states.bright=60 from config.jsonc.
+ * ------------------------------------------------------------ */
+#backlight {
+  color: #565f89; /* icy muted - screen is dim */
+}
+
+#backlight.mid {
+  color: #7dcfff; /* cyan - coming up */
+}
+
+#backlight.bright {
+  color: #a9d4ff; /* bright ice-blue - screen is glowing */
 }
 
 #battery {
