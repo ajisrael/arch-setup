@@ -12,6 +12,12 @@ export EDITOR='nvim'
 
 alias vim="nvim"
 
+# opencode: load the MCP server secrets (repo-root .env, decrypted by
+# build/decrypt-secrets.sh) into the session env, then launch. Uses the full
+# path to the binary so the alias doesn't recurse; the source is guarded
+# because .env won't exist on a fresh clone.
+alias opencode='if [[ -f /home/ajisrael/arch-setup/.env ]]; then set -a; source /home/ajisrael/arch-setup/.env; set +a; fi; /usr/bin/opencode'
+
 # Keybindings
 bindkey -s ^f "tmux-sessionizer\n"
 
