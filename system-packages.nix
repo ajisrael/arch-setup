@@ -69,6 +69,10 @@
     "pipewire-pulse"
     "wireplumber"
     "alsa-utils"
+    # ALSA-only apps (e.g. Handy's cpal microphone capture) need ALSA's default
+    # PCM to route through PipeWire; without this, opening "default" fails while
+    # the raw hw device (plughw:1,0) still works.
+    "pipewire-alsa"
     # Bluetooth
     "bluez"
     "bluez-utils"
@@ -81,12 +85,15 @@
     "brightnessctl"
     # Archives
     "unzip"
+    # Speech-to-text (Handy needs wtype to type on Wayland; the app itself is in AUR)
+    "wtype"
   ];
 
   aurPackages = [
     "paru"
     "actkbd"
     "google-chrome"
+    "handy-bin" # offline local-model speech-to-text (like macOS Handy); needs wtype on Wayland
     "ttf-meslo-nerd-font-powerlevel10k" # MesloLGS NF, for the bash prompt icons in kitty
   ];
 }

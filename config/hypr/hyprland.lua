@@ -29,6 +29,9 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("mako &")
     hl.exec_cmd("hyprpolkitagent &")
     hl.exec_cmd("wl-paste --watch cliphist store &")
+    -- Handy speech-to-text daemon. --start-hidden keeps the main window closed
+    -- (it lives in the tray; the transcribe toggle is bound in KEYBINDINGS below).
+    hl.exec_cmd("handy --start-hidden &")
     -- hl.exec_cmd("hypridle &") -- once a hypridle.conf exists
 end)
 
@@ -202,6 +205,10 @@ hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+-- Speech-to-text toggle (Handy). Wayland forbids apps from grabbing global
+-- hotkeys, so Hyprland owns Alt+Space and tells the background Handy daemon to
+-- start/stop transcribing via its CLI IPC.
+hl.bind("ALT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
