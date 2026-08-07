@@ -85,6 +85,15 @@
     "brightnessctl"
     # Archives
     "unzip"
+    # Language toolchains - mason.nvim builds gopls from source (needs go) and
+    # installs pyright, html-lsp and typescript-language-server via npm
+    # (nodejs + npm); without these those LSP installs fail in nvim.
+    # tree-sitter-cli is required by the nvim-treesitter main branch to build
+    # parsers ("tree-sitter build").
+    "go"
+    "nodejs"
+    "npm"
+    "tree-sitter-cli"
     # Speech-to-text (Handy needs wtype to type on Wayland; the app itself is in AUR)
     "wtype"
   ];
