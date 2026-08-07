@@ -53,8 +53,11 @@ hl.config({
         border_size = 2,
 
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            -- Campfire gradient: warm Charmander-orange -> Pikachu-yellow for the
+            -- focused window, matching the fire glow in pkmn-night-bg.png.
+            active_border   = { colors = {"rgba(ff9e64ee)", "rgba(e0af68ee)"}, angle = 45 },
+            -- Icy muted purple-blue for unfocused windows (snowy night sky).
+            inactive_border = "rgba(565f89aa)",
         },
 
         resize_on_border = false,
@@ -64,7 +67,7 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 10,
+        rounding       = 12,
         rounding_power = 2,
 
         active_opacity   = 1.0,
@@ -74,20 +77,30 @@ hl.config({
             enabled      = true,
             range        = 4,
             render_power = 3,
-            color        = 0xee1a1a1a,
+            color        = 0xbb1a1b26, -- deep Tokyo Night indigo, softer than pure black
         },
 
         blur = {
-            enabled   = true,
-            size      = 3,
-            passes    = 1,
-            vibrancy  = 0.1696,
+            enabled  = true,
+            size     = 5,
+            passes   = 2,     -- higher passes keep the frost looking clean at size 5
+            vibrancy = 0.1696, -- subtle saturation lift, avoids the icy look going flat
         },
     },
 
     animations = {
         enabled = true,
     },
+})
+
+-- Waybar is a layer surface, so the frosted-glass backdrop comes from a layer
+-- rule (window rules don't reach it). The translucent rgba() bar background in
+-- style.css then gets blurred over whatever wallpaper is behind it.
+hl.layer_rule({
+    name  = "blur-waybar",
+    match = { namespace = "waybar" },
+
+    blur = true,
 })
 
 hl.curve("easeOutQuint",   { type = "bezier", points = { {0.23, 1},    {0.32, 1}    } })
