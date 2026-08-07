@@ -43,6 +43,7 @@
     "pciutils"
     "usbutils"
     "tmux"
+    "zsh"
     "vim"
     "neovim"
     "fzf"
