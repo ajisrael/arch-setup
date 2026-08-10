@@ -80,6 +80,33 @@ if [ "$GRUB_CHANGED" = 1 ]; then
     sudo grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
+# Deploy every udev rules file from config/udev/rules.d/. These apply to the
+# booted system only (for the initramfs, modprobe.d + modconf is the way -
+# udev rules proved unreliable there). The current rule fires the power-profile
+# switcher on AC plug/unplug.
+UDEV_CHANGED=0
+for rule in "$DIR/config/udev/rules.d/"*.rules; do
+    [ -e "$rule" ] || continue
+    dest="/etc/udev/rules.d/$(basename "$rule")"
+    cmp -s "$rule" "$dest" || UDEV_CHANGED=1
+    sudo install -Dm644 "$rule" "$dest"
+done
+
+if [ "$UDEV_CHANGED" = 1 ]; then
+    echo "==> udev rules changed; reloading + re-triggering power_supply"
+    sudo udevadm control --reload
+    sudo udevadm trigger --subsystem-match=power_supply
+fi
+
+# power-profiles-daemon provides the D-Bus API build/power-profile.sh drives.
+# Needs the package (system-packages.nix) to exist first.
+if systemctl list-unit-files power-profiles-daemon.service >/dev/null 2>&1; then
+    sudo systemctl enable --now power-profiles-daemon.service >/dev/null
+    echo "==> power-profiles-daemon enabled"
+else
+    echo "warning: power-profiles-daemon not installed yet (run build/system-packages.sh); power profiles will not switch"
+fi
+
 # An earlier version used a custom udev rule + /dev/input/actkbd-kbd symlink.
 # actkbd opens its device with fopen("a+"), which CREATES a regular file if
 # the path is missing - so a bogus file can sit there and block the symlink,

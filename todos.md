@@ -39,7 +39,7 @@
 Tier 1 - high value, low effort:
 
 - [x] Idle -> lock pipeline: hypridle lock on sleep + staged timeout (lock 5m -> dpms 5:30 -> suspend 15m). Pending `./rebuild.sh`.
-- [ ] AC/battery power-profile autoswitch (power-profiles-daemon)
+- [x] AC/battery power-profile autoswitch (power-profiles-daemon): build/power-profile.sh + udev rule + autostart. Pending package install + system-config.sh.
 - [ ] Audio sink switching + restart-audio recovery
 - [ ] Screenshot/recording suite (region/window/fullscreen, wf-recorder, OCR)
 - [ ] Nightlight toggle (hyprsunset/wlsunset)

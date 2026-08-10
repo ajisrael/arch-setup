@@ -158,7 +158,7 @@ waybar/hyprlock/mako/wofi stack.
 | Item | Status |
 | ---- | ------ |
 | #1 idle → lock pipeline | Implemented (`config/hypr/hypridle.conf`, wired into `home.nix` + autostart). Pending user apply via `./rebuild.sh`. |
-| #2 power profiles | Not started |
+| #2 power profiles | Implemented (`build/power-profile.sh` + `config/udev/rules.d/90-power-profile.rules` + `power-profiles-daemon` in `system-packages.nix` + autostart + `system-config.sh` deploy). Pending package install + apply. |
 | #3 audio switching | Not started |
 | #4 capture suite | Not started |
 | #5 nightlight | Not started |

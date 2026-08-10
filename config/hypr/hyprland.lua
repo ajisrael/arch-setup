@@ -37,6 +37,10 @@ hl.on("hyprland.start", function ()
     -- (it lives in the tray; the transcribe toggle is bound in KEYBINDINGS below).
     hl.exec_cmd("handy --start-hidden &")
     hl.exec_cmd("hypridle &")
+    -- Power profile: pick power-saver/balanced for the current AC/battery state.
+    -- The udev rule (config/udev/rules.d/90-power-profile.rules) re-applies it
+    -- on plug/unplug; this line covers the boot/login case.
+    hl.exec_cmd("/home/ajisrael/arch-setup/build/power-profile.sh &")
 end)
 
 

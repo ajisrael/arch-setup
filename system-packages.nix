@@ -34,6 +34,9 @@
     "acpi_call-dkms"
     "acpica"
     "acpid"
+    # Power management - D-Bus power profile API driven by build/power-profile.sh
+    # (auto-switches power-saver/balanced on AC/battery).
+    "power-profiles-daemon"
     # System daemons / network
     "networkmanager"
     "iwd"
