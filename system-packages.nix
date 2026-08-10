@@ -56,6 +56,7 @@
     "hyprlock"
     "hypridle"
     "hyprpaper"
+    "hyprsunset" # nightlight temperature filter (build/nightlight.sh)
     "hyprpolkitagent"
     "waybar"
     "mako"

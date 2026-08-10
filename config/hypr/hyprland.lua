@@ -229,6 +229,8 @@ hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/screenshot.sh"))
 hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/record.sh"))
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/ocr.sh"))
+-- Nightlight: Super+Shift+N toggles the warm 4000K hyprsunset filter.
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/nightlight.sh toggle"))
 
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
