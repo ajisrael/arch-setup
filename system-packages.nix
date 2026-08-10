@@ -38,6 +38,7 @@
     # (auto-switches power-saver/balanced on AC/battery).
     "power-profiles-daemon"
     # System daemons / network
+    "systemd-oomd" # PSI-based OOM killing (config/systemd/oomd.conf.d)
     "networkmanager"
     "iwd"
     "openssh"

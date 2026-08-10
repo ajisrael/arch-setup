@@ -3,12 +3,16 @@
 #
 # home-manager can only own user-scope files (~/.config etc); root-level files
 # are versioned in config/ and copied here. Currently handles:
-#   - config/actkbd/     the keyboard backlight hotkey daemon
-#   - config/modprobe.d/ modprobe.d install reroutes (backlight boot floor for
-#                        the LUKS prompt; modconf bundles these into the image,
-#                        which is rebuilt automatically when they change)
-# Extend as more system config moves into the repo (udev rules, tmpfiles,
-# pacman.conf).
+#   - config/actkbd/             the keyboard backlight hotkey daemon
+#   - config/modprobe.d/         modprobe.d install reroutes (backlight boot floor
+#                                for the LUKS prompt; modconf bundles these into
+#                                the image, which is rebuilt automatically)
+#   - config/udev/rules.d/       udev rules (AC/battery power-profile switch)
+#   - config/NetworkManager/conf.d/  wifi powersave off
+#   - config/sysctl.d/           inotify watcher ceiling (applied immediately)
+#   - config/systemd/oomd.conf.d/    systemd-oomd PSI tuning (+ enables the unit)
+#   - config/grub.d/             GRUB menu scripts (regenerates grub.cfg)
+# Extend as more system config moves into the repo (tmpfiles, pacman.conf).
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
@@ -96,6 +100,62 @@ if [ "$UDEV_CHANGED" = 1 ]; then
     echo "==> udev rules changed; reloading + re-triggering power_supply"
     sudo udevadm control --reload
     sudo udevadm trigger --subsystem-match=power_supply
+fi
+
+# Deploy every NetworkManager conf.d drop-in (currently 10-wifi-powersave.conf,
+# the wifi.powersave=2 fix for flaky firmware links). Reload NM so the new
+# connection default applies without a restart.
+NM_SRC="$DIR/config/NetworkManager/conf.d"
+NM_CHANGED=0
+for conf in "$NM_SRC"/*.conf; do
+    [ -e "$conf" ] || continue
+    dest="/etc/NetworkManager/conf.d/$(basename "$conf")"
+    cmp -s "$conf" "$dest" || NM_CHANGED=1
+    sudo install -Dm644 "$conf" "$dest"
+done
+
+if [ "$NM_CHANGED" = 1 ]; then
+    echo "==> NetworkManager conf.d changed; reloading"
+    sudo nmcli general reload
+fi
+
+# Deploy every sysctl drop-in (currently 90-file-watchers.conf, the raised
+# inotify ceiling). Apply immediately so the change takes effect now, not on
+# the next boot.
+SYSCTL_SRC="$DIR/config/sysctl.d"
+SYSCTL_CHANGED=0
+for conf in "$SYSCTL_SRC"/*.conf; do
+    [ -e "$conf" ] || continue
+    dest="/etc/sysctl.d/$(basename "$conf")"
+    cmp -s "$conf" "$dest" || SYSCTL_CHANGED=1
+    sudo install -Dm644 "$conf" "$dest"
+done
+
+if [ "$SYSCTL_CHANGED" = 1 ]; then
+    echo "==> sysctl.d changed; applying"
+    sudo sysctl --system
+fi
+
+# Deploy the systemd-oomd tuning, then make sure the daemon is running.
+# Needs the package (system-packages.nix) to exist first.
+OOMD_SRC="$DIR/config/systemd/oomd.conf.d"
+OOMD_CHANGED=0
+for conf in "$OOMD_SRC"/*.conf; do
+    [ -e "$conf" ] || continue
+    dest="/etc/systemd/oomd.conf.d/$(basename "$conf")"
+    cmp -s "$conf" "$dest" || OOMD_CHANGED=1
+    sudo install -Dm644 "$conf" "$dest"
+done
+
+if systemctl list-unit-files systemd-oomd.service >/dev/null 2>&1; then
+    if [ "$OOMD_CHANGED" = 1 ]; then
+        echo "==> oomd.conf.d changed; restarting systemd-oomd"
+        sudo systemctl restart systemd-oomd.service
+    fi
+    sudo systemctl enable --now systemd-oomd.service >/dev/null
+    echo "==> systemd-oomd enabled"
+else
+    echo "warning: systemd-oomd not installed yet (run build/system-packages.sh); OOM protection is not running"
 fi
 
 # power-profiles-daemon provides the D-Bus API build/power-profile.sh drives.
