@@ -256,6 +256,10 @@ hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
 hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true, repeating = true })
 hl.bind("XF86AudioMicMute",     hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),   { locked = true, repeating = true })
+-- Audio sink switching: Super+A cycles the default output, Super+Shift+A
+-- restarts the audio stack (recovery when a device wedges).
+hl.bind(mainMod .. " + A",      hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/audio-sink-cycle.sh"))
+hl.bind(mainMod .. " + SHIFT + A", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/restart-audio.sh"))
 -- Screen brightness (XF86MonBrightnessUp/Down) is handled by actkbd globally
 -- (config/actkbd/actkbd.conf) - binding it here too would double-step.
 
