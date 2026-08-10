@@ -160,7 +160,7 @@ waybar/hyprlock/mako/wofi stack.
 | #1 idle → lock pipeline | Implemented (`config/hypr/hypridle.conf`, wired into `home.nix` + autostart). Pending user apply via `./rebuild.sh`. |
 | #2 power profiles | Implemented (`build/power-profile.sh` + `config/udev/rules.d/90-power-profile.rules` + `power-profiles-daemon` in `system-packages.nix` + autostart + `system-config.sh` deploy). Pending package install + apply. |
 | #3 audio switching | Implemented (`build/audio-sink-cycle.sh` sink cycling + `build/restart-audio.sh` recovery; Super+A / Super+Shift+A binds). |
-| #4 capture suite | Not started |
+| #4 capture suite | Implemented (`build/screenshot.sh` region/full/window/copy, `build/record.sh` wf-recorder toggle, `build/ocr.sh` tesseract→clipboard; Super+Shift+S/R/O binds; wf-recorder + tesseract packages). |
 | #5 nightlight | Not started |
 | #6 wireless/watcher tuning | Not started |
 | #7 snapshot-update flow | Not started |

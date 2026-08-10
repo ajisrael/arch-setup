@@ -224,7 +224,11 @@ hl.bind("ALT + SPACE", hl.dsp.exec_cmd("handy --toggle-transcription"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + J", hl.dsp.layout("togglesplit"))
 hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | swappy -f -"))
+-- Capture suite: Super+Shift+S screenshot (region/swappy), +R recording
+-- toggle, +O OCR-to-clipboard.
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/screenshot.sh"))
+hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/record.sh"))
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/ocr.sh"))
 
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))

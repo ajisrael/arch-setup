@@ -41,7 +41,7 @@ Tier 1 - high value, low effort:
 - [x] Idle -> lock pipeline: hypridle lock on sleep + staged timeout (lock 5m -> dpms 5:30 -> suspend 15m). Pending `./rebuild.sh`.
 - [x] AC/battery power-profile autoswitch (power-profiles-daemon): build/power-profile.sh + udev rule + autostart. Pending package install + system-config.sh.
 - [x] Audio sink switching + restart-audio recovery: build/audio-sink-cycle.sh (Super+A) + build/restart-audio.sh (Super+Shift+A).
-- [ ] Screenshot/recording suite (region/window/fullscreen, wf-recorder, OCR)
+- [x] Screenshot/recording suite: build/screenshot.sh (Super+Shift+S, region/full/window/copy) + build/record.sh (Super+Shift+R) + build/ocr.sh (Super+Shift+O).
 - [ ] Nightlight toggle (hyprsunset/wlsunset)
 - [ ] Wireless + watcher tuning (wifi powersave off, inotify watchers, oomd)
 - [ ] Snapshot-before-update workflow (build/update.sh + ALPM hook)

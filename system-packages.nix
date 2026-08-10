@@ -84,6 +84,9 @@
     "grim"
     "slurp"
     "swappy"
+    "wf-recorder" # screen recording (build/record.sh)
+    "tesseract" # OCR (build/ocr.sh)
+    "tesseract-data-eng"
     "lazygit"
     "opencode"
     "brightnessctl"
