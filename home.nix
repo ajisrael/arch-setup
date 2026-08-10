@@ -121,6 +121,7 @@
       force = true; # clobbers the auto-generated config from the first start-hyprland
     };
     ".config/hypr/hyprlock.conf".source = link "hypr/hyprlock.conf";
+    ".config/hypr/hypridle.conf".source = link "hypr/hypridle.conf";
     ".config/hypr/hyprpaper.conf".source = link "hypr/hyprpaper.conf";
     ".config/kitty/kitty.conf".source = link "kitty/kitty.conf";
     ".config/mako/config".source = link "mako/config";

@@ -36,7 +36,7 @@ hl.on("hyprland.start", function ()
     -- Handy speech-to-text daemon. --start-hidden keeps the main window closed
     -- (it lives in the tray; the transcribe toggle is bound in KEYBINDINGS below).
     hl.exec_cmd("handy --start-hidden &")
-    -- hl.exec_cmd("hypridle &") -- once a hypridle.conf exists
+    hl.exec_cmd("hypridle &")
 end)
 
 
