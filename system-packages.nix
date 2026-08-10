@@ -108,5 +108,6 @@
     "google-chrome"
     "handy-bin" # offline local-model speech-to-text (like macOS Handy); needs wtype on Wayland
     "ttf-meslo-nerd-font-powerlevel10k" # MesloLGS NF, for the bash prompt icons in kitty
+    "ttf-press-start-2p" # retro 8-bit font (Atari-era glyphs), for the hyprlock clock
   ];
 }
