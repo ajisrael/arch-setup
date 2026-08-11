@@ -190,6 +190,7 @@ hl.config({
         touchpad = {
             natural_scroll = true,
             tap_to_click   = false,
+            scroll_factor  = 0.5, -- halve scroll speed; the stock 1.0 was too sensitive
         },
     },
 })
@@ -231,6 +232,23 @@ hl.bind(mainMod .. " + SHIFT + R", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/bu
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/ocr.sh"))
 -- Nightlight: Super+Shift+N toggles the warm 4000K hyprsunset filter.
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/nightlight.sh toggle"))
+-- Browser: Super+B focuses an open Chrome window, else starts Chrome.
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/launch-or-focus.sh google-chrome google-chrome"))
+-- Wi-Fi share QR: Super+W notifies with the current network's QR (join with a phone).
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/network-qr.sh --png"))
+-- Window toggles: gaps (Super+G), tiled fullscreen (Super+F), transparency on
+-- the focused window (Super+Shift+I), single-window 1:1 aspect (Super+Shift+F),
+-- pop-out float (Super+Shift+P), close every window (Super+Shift+Q).
+-- Width save/restore lives in build/window.sh (width-save / width-restore);
+-- no default binds (MacBook keyboard has no Home key).
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh gaps"))
+hl.bind(mainMod .. " + F", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh fullscreen"))
+hl.bind(mainMod .. " + SHIFT + I", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh transparency"))
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh square"))
+hl.bind(mainMod .. " + SHIFT + P", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh pop"))
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/window.sh close-all"))
+-- Keybinding cheatsheet: Super+SLASH opens the bind list in wofi.
+hl.bind(mainMod .. " + SLASH", hl.dsp.exec_cmd("/home/ajisrael/arch-setup/build/keybindings.sh"))
 
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))

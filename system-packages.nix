@@ -38,7 +38,6 @@
     # (auto-switches power-saver/balanced on AC/battery).
     "power-profiles-daemon"
     # System daemons / network
-    "systemd-oomd" # PSI-based OOM killing (config/systemd/oomd.conf.d)
     "networkmanager"
     "iwd"
     "openssh"
@@ -89,6 +88,8 @@
     "wf-recorder" # screen recording (build/record.sh)
     "tesseract" # OCR (build/ocr.sh)
     "tesseract-data-eng"
+    "jq" # JSON parsing for hyprctl -j in build/ scripts
+    "qrencode" # wifi share QR (build/network-qr.sh)
     "lazygit"
     "opencode"
     "brightnessctl"

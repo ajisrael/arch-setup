@@ -137,7 +137,8 @@ if [ "$SYSCTL_CHANGED" = 1 ]; then
 fi
 
 # Deploy the systemd-oomd tuning, then make sure the daemon is running.
-# Needs the package (system-packages.nix) to exist first.
+# systemd ships the unit itself (no separate package), so the guard is only
+# there for non-systemd platforms.
 OOMD_SRC="$DIR/config/systemd/oomd.conf.d"
 OOMD_CHANGED=0
 for conf in "$OOMD_SRC"/*.conf; do
