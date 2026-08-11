@@ -44,7 +44,7 @@ Tier 1 - high value, low effort:
 - [x] Screenshot/recording suite: build/screenshot.sh (Super+Shift+S, region/full/window/copy) + build/record.sh (Super+Shift+R) + build/ocr.sh (Super+Shift+O).
 - [x] Nightlight toggle (hyprsunset): build/nightlight.sh (Super+Shift+N) warms to 4000K; `hyprsunset` in system-packages.nix. Pending package install.
 - [x] Wireless + watcher tuning: wifi powersave off (NetworkManager conf.d), inotify watchers 524288 (sysctl.d), systemd-oomd with 50%/20s PSI limits (oomd.conf.d). Pending package install + system-config.sh.
-- [x] Snapshot-before-update workflow: build/update.sh (free-space check -> snapshot -> pacman -Syu -> AUR -> restart prompt) + ALPM pre-transaction hook (config/pacman/hooks/update-snapshot.hook) that snapshots before any upgrade. Pending system-config.sh deploy.
+- [x] Snapshot-before-update workflow: build/update.sh (free-space check -> snapshot -> pacman -Syu -> AUR -> restart prompt). Opt-in only - no ALPM hook (deliberate: bare `pacman -Syu` stays unchanged).
 
 Tier 2 - medium value, more effort:
 

@@ -2,9 +2,10 @@
 # Blessed system update flow: free-space check -> btrfs snapshot -> pacman -Syu
 # (-> AUR refresh) -> restart prompt. Run this instead of bare `sudo pacman -Syu`.
 #
-# Even when this wrapper is bypassed, the ALPM pre-transaction hook
-# (config/pacman/hooks/update-snapshot.hook) snapshots before any package
-# upgrade, so a direct `sudo pacman -Syu` still lands on a rollback point.
+# The snapshot is deliberately OPT-IN: there is no ALPM pre-transaction hook, so
+# a bare `sudo pacman -Syu` behaves exactly as before (no auto-snapshot, no
+# AbortOnFail surprises on every upgrade). If you bypass this wrapper, remember
+# to run build/snapshot.sh yourself before a risky change.
 #
 # Usage:
 #   update.sh          # interactive

@@ -163,6 +163,6 @@ waybar/hyprlock/mako/wofi stack.
 | #4 capture suite | Implemented (`build/screenshot.sh` region/full/window/copy, `build/record.sh` wf-recorder toggle, `build/ocr.sh` tesseract→clipboard; Super+Shift+S/R/O binds; wf-recorder + tesseract packages). |
 | #5 nightlight | Implemented (`build/nightlight.sh` warm 4000K toggle via hyprsunset, pid-tracked; Super+Shift+N bind; `hyprsunset` package). Pending package install. |
 | #6 wireless/watcher tuning | Implemented (`config/NetworkManager/conf.d/10-wifi-powersave.conf`, `config/sysctl.d/90-file-watchers.conf`, `config/systemd/oomd.conf.d/10-oomd.conf` + `systemd-oomd` package + `system-config.sh` deploy). USB autosuspend intentionally skipped (Broadcom is PCIe here). Pending package install + apply. |
-| #7 snapshot-update flow | Implemented (`build/update.sh` wrapper: free-space check → snapshot → pacman -Syu → paru -Sua → restart prompt; `config/pacman/hooks/update-snapshot.hook` ALPM pre-transaction snapshot). Pending `system-config.sh` deploy. |
+| #7 snapshot-update flow | Implemented (`build/update.sh` wrapper: free-space check → snapshot → pacman -Syu → paru -Sua → restart prompt). Opt-in only; the ALPM pre-transaction hook was considered and intentionally dropped - bare `sudo pacman -Syu` stays unchanged. |
 | #8–17 | Not started |
 | Tier 3 | Evaluated, no action planned |

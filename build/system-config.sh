@@ -11,7 +11,6 @@
 #   - config/NetworkManager/conf.d/  wifi powersave off
 #   - config/sysctl.d/           inotify watcher ceiling (applied immediately)
 #   - config/systemd/oomd.conf.d/    systemd-oomd PSI tuning (+ enables the unit)
-#   - config/pacman/hooks/       ALPM pre-transaction snapshot hook
 #   - config/grub.d/             GRUB menu scripts (regenerates grub.cfg)
 # Extend as more system config moves into the repo (tmpfiles, pacman.conf).
 set -euo pipefail
@@ -102,15 +101,6 @@ if [ "$UDEV_CHANGED" = 1 ]; then
     sudo udevadm control --reload
     sudo udevadm trigger --subsystem-match=power_supply
 fi
-
-# Deploy the ALPM pre-transaction hook that snapshots before any package
-# upgrade (config/pacman/hooks/update-snapshot.hook). It keeps direct
-# `sudo pacman -Syu` on a rollback point even when build/update.sh is bypassed.
-# pacman reads hooks from /etc/pacman.d/hooks per transaction - no reload needed.
-for hook in "$DIR/config/pacman/hooks/"*.hook; do
-    [ -e "$hook" ] || continue
-    sudo install -Dm644 "$hook" "/etc/pacman.d/hooks/$(basename "$hook")"
-done
 
 # Deploy every NetworkManager conf.d drop-in (currently 10-wifi-powersave.conf,
 # the wifi.powersave=2 fix for flaky firmware links). Reload NM so the new
