@@ -47,6 +47,16 @@
 
   home.packages = [ pkgs.hello ];
 
+  # Receive Taildrop files into ~/Downloads as a persistent user service.
+  # The script stages deliveries and announces them via mako.
+  systemd.user.services."taildrop-receive" = {
+    Unit.Description = "Receive Taildrop files into ~/Downloads";
+    Unit.After = [ "graphical-session.target" ];
+    Service.ExecStart = "/home/ajisrael/arch-setup/build/taildrop-receive.sh";
+    Service.Restart = "on-failure";
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # zsh + oh-my-zsh + Powerlevel10k, mirroring the macOS dotfiles setup but
   # declarative: pkgs.zsh-powerlevel10k provides the theme (oh-my-zsh's
   # `custom` points at its share dir so ZSH_THEME="powerlevel10k/powerlevel10k"
