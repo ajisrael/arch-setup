@@ -43,18 +43,18 @@ Tier 1 - high value, low effort:
 - [x] Audio sink switching + restart-audio recovery: build/audio-sink-cycle.sh (Super+A) + build/restart-audio.sh (Super+Shift+A).
 - [x] Screenshot/recording suite: build/screenshot.sh (Super+Shift+S, region/full/window/copy) + build/record.sh (Super+Shift+R) + build/ocr.sh (Super+Shift+O).
 - [x] Nightlight toggle (hyprsunset): build/nightlight.sh (Super+Shift+N) warms to 4000K; `hyprsunset` in system-packages.nix. Pending package install.
-- [x] Wireless + watcher tuning: wifi powersave off (NetworkManager conf.d), inotify watchers 524288 (sysctl.d), systemd-oomd with 50%/20s PSI limits (oomd.conf.d). Pending package install + system-config.sh.
+- [x] Wireless + watcher tuning: wifi powersave off (NetworkManager conf.d), inotify watchers 524288 (sysctl.d), systemd-oomd 50%/20s PSI limits (oomd.conf.d - unit ships inside `systemd`, no separate package). Pending package install + system-config.sh.
 - [x] Snapshot-before-update workflow: build/update.sh (free-space check -> snapshot -> pacman -Syu -> AUR -> restart prompt). Opt-in only - no ALPM hook (deliberate: bare `pacman -Syu` stays unchanged).
 
 Tier 2 - medium value, more effort:
 
 - [ ] Cross-app theme system (palette -> generated configs)
 - [ ] External monitor / clamshell handling
-- [ ] Launch-or-focus helper
-- [ ] Window toggles (gaps / transparency / fullscreen / aspect / layout / pop)
-- [ ] Wi-Fi QR + status
-- [ ] Taildrop send/receive
-- [ ] Webapp launcher
-- [ ] Keybinding cheatsheet
+- [x] Launch-or-focus helper: build/launch-or-focus.sh (Super+B launches-or-focuses Chrome).
+- [x] Window toggles (gaps / transparency / fullscreen / aspect / layout / pop): build/window.sh (Lua dispatch DSL).
+- [x] Wi-Fi QR + status: build/network-qr.sh + build/network-status.sh. Pending qrencode install.
+- [x] Taildrop send/receive: build/taildrop-send.sh + build/taildrop-receive.sh + home.nix user service. Active.
+- [x] Webapp launcher: build/webapp.sh (isolated Chrome profile + --class).
+- [x] Keybinding cheatsheet: build/keybindings.sh + build/keybindings.awk (Super+SLASH).
 - [ ] zram + hibernation (LUKS-aware)
 - [ ] Hardware-detection pattern (DMI/sysfs-gated fixes)

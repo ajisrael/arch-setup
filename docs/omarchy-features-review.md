@@ -162,7 +162,16 @@ waybar/hyprlock/mako/wofi stack.
 | #3 audio switching | Implemented (`build/audio-sink-cycle.sh` sink cycling + `build/restart-audio.sh` recovery; Super+A / Super+Shift+A binds). |
 | #4 capture suite | Implemented (`build/screenshot.sh` region/full/window/copy, `build/record.sh` wf-recorder toggle, `build/ocr.sh` tesseract→clipboard; Super+Shift+S/R/O binds; wf-recorder + tesseract packages). |
 | #5 nightlight | Implemented (`build/nightlight.sh` warm 4000K toggle via hyprsunset, pid-tracked; Super+Shift+N bind; `hyprsunset` package). Pending package install. |
-| #6 wireless/watcher tuning | Implemented (`config/NetworkManager/conf.d/10-wifi-powersave.conf`, `config/sysctl.d/90-file-watchers.conf`, `config/systemd/oomd.conf.d/10-oomd.conf` + `systemd-oomd` package + `system-config.sh` deploy). USB autosuspend intentionally skipped (Broadcom is PCIe here). Pending package install + apply. |
+| #6 wireless/watcher tuning | Implemented (`config/NetworkManager/conf.d/10-wifi-powersave.conf`, `config/sysctl.d/90-file-watchers.conf`, `config/systemd/oomd.conf.d/10-oomd.conf` + `system-config.sh` deploy). USB autosuspend intentionally skipped (Broadcom is PCIe here). Note: `systemd-oomd` is **not** an Arch package - it ships inside `systemd`, so only the oomd.conf.d drop-in + unit enable/restart are deployed. Pending package install + apply. |
 | #7 snapshot-update flow | Implemented (`build/update.sh` wrapper: free-space check → snapshot → pacman -Syu → paru -Sua → restart prompt). Opt-in only; the ALPM pre-transaction hook was considered and intentionally dropped - bare `sudo pacman -Syu` stays unchanged. |
-| #8–17 | Not started |
+| #8 cross-app theme system | Not started (largest Tier 2 effort; the signature Omarchy feature). |
+| #9 external monitor / clamshell | Not started. Display/input tuning did land separately (`0651566`: monitor scale 1.25, touchpad scroll_factor 0.5, pointer sensitivity 0.1), but the clamshell state machine / DDC brightness is untouched. |
+| #10 launch-or-focus | Implemented (`build/launch-or-focus.sh`, `81e442b`; Super+B launches-or-focuses Chrome). |
+| #11 window toggles | Implemented (`build/window.sh`, `81e442b`; Lua dispatch DSL for Hyprland 0.56, state in `~/.local/state/hypr-window/`). |
+| #12 Wi-Fi QR + status | Implemented (`build/network-qr.sh` + `build/network-status.sh`, `81e442b`; `qrencode` package). Pending package install. |
+| #13 taildrop send/receive | Implemented (`build/taildrop-send.sh` + `build/taildrop-receive.sh` + `home.nix` user service, `5d1c486`). Already activated by rebuild. |
+| #14 webapp launcher | Implemented (`build/webapp.sh`, `81e442b`; isolated Chrome profile + `--class`). |
+| #15 keybinding cheatsheet | Implemented (`build/keybindings.sh` + `build/keybindings.awk`, `81e442b`; rendered from `hyprland.lua` comments, Super+SLASH). |
+| #16 zram + hibernation | Not started. |
+| #17 hardware-detection pattern | Not started. |
 | Tier 3 | Evaluated, no action planned |
