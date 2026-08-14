@@ -6,7 +6,7 @@ hl.monitor({
     output   = "",
     mode     = "preferred",
     position = "auto",
-    scale    = "auto",
+    scale    = 1.25,
 })
 
 
@@ -185,7 +185,7 @@ hl.config({
 
         follow_mouse = 0,
 
-        sensitivity = 0,
+        sensitivity = 0.1,
 
         touchpad = {
             natural_scroll = true,

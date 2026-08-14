@@ -124,6 +124,7 @@
     ".config/hypr/hypridle.conf".source = link "hypr/hypridle.conf";
     ".config/hypr/hyprpaper.conf".source = link "hypr/hyprpaper.conf";
     ".config/kitty/kitty.conf".source = link "kitty/kitty.conf";
+    ".config/chrome-flags.conf".source = link "chrome/chrome-flags.conf"; # read by /usr/bin/google-chrome-stable (AUR wrapper)
     ".config/mako/config".source = link "mako/config";
     ".config/wofi/config".source = link "wofi/config";
     ".config/wofi/style.css".source = link "wofi/style.css";
