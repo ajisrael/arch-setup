@@ -23,3 +23,8 @@ fi
 __bashrc_dir=$(dirname -- "$__bashrc_dir")
 source "$__bashrc_dir/prompt.bashrc"
 unset __bashrc_real __bashrc_dir
+
+# direnv hook (TTY1 bash; zsh gets it via home-manager programs.direnv).
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook bash)"
+fi

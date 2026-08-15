@@ -47,6 +47,17 @@
 
   home.packages = [ pkgs.hello pkgs.uv ];
 
+  # direnv: environment switcher. Hooks into zsh automatically via
+  # zsh.initContent; bash (TTY1) is a repo-owned file so its hook would go in
+  # config/bash/bashrc if ever needed. nix-direnv (cached use_nix) can be
+  # enabled here when wanted.
+  programs.direnv = {
+    enable = true;
+    # direnv's "loading .envrc" / "export ..." lines during zsh init trigger the
+    # p10k instant-prompt console-output warning; silence direnv itself instead.
+    silent = true;
+  };
+
   # Receive Taildrop files into ~/Downloads as a persistent user service.
   # The script stages deliveries and announces them via mako.
   systemd.user.services."taildrop-receive" = {
