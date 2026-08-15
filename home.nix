@@ -45,7 +45,7 @@
     };
   };
 
-  home.packages = [ pkgs.hello pkgs.uv ];
+  home.packages = [ pkgs.hello pkgs.uv pkgs.btop ];
 
   # direnv: environment switcher. Hooks into zsh automatically via
   # zsh.initContent; bash (TTY1) is a repo-owned file so its hook would go in
@@ -151,6 +151,8 @@
     ".config/wofi/style.css".source = link "wofi/style.css";
     ".config/waybar/config.jsonc".source = link "waybar/config.jsonc";
     ".config/waybar/style.css".source = link "waybar/style.css";
+    ".config/btop/btop.conf".source = link "btop/btop.conf";
+    ".config/btop/themes/tokyo-night.theme".source = link "btop/tokyo-night.theme";
     # opencode: project-local configs promoted to global user config. Loaded by
     # opencode on startup; restart opencode after a switch to pick up changes.
     ".config/opencode/opencode.json".source = link "opencode/opencode.json";
