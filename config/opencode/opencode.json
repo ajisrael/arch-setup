@@ -1,5 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "~/examples/**": "allow",
+      "/tmp/opencode/**": "allow"
+    }
+  },
   "mcp": {
     "sonarqube": {
       "type": "remote",
@@ -49,7 +55,7 @@
     "structurizr": {
       "type": "remote",
       "url": "http://code-control:4001/mcp",
-      "enabled": true
+      "enabled": false
     }
   }
 }
