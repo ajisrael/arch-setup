@@ -45,7 +45,7 @@
     };
   };
 
-  home.packages = [ pkgs.hello ];
+  home.packages = [ pkgs.hello pkgs.uv ];
 
   # Receive Taildrop files into ~/Downloads as a persistent user service.
   # The script stages deliveries and announces them via mako.
