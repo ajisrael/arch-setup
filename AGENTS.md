@@ -25,8 +25,9 @@ The bash prompt (Tokyo Night, mirrors the macOS Powerlevel10k look) lives in
 `config/bash/` (`bashrc` + `prompt.bashrc`), symlinked to `~/.bashrc` and
 `~/.bash_profile` by home-manager - used on TTY1 and as a fallback, kept in
 the 256-color + plain glyph mode rather than forcing icons everywhere. tmux
-window names are owned by the zsh preexec/precmd hooks in `personal.zsh`, so
-tmux.conf keeps `automatic-rename off`.
+window names are set explicitly (tmux-sessionizer, tmux-my-todos) and
+otherwise left alone - `tmux.conf` keeps `automatic-rename off` so tmux
+doesn't overwrite them with its own guess.
 
 ## The user always runs ./rebuild.sh themselves
 

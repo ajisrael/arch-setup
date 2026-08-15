@@ -79,9 +79,11 @@ tmux_running=$(pgrep tmux)
 # then create a new session and exit
 if [[ -z $TMUX ]]; then
 	if [[ -z $tmux_running ]] || ! tmux has-session -t "$session_name" 2> /dev/null; then
-		tmux new-session -s $session_name -c $selected
+		tmux new-session -s "$session_name" -c "$selected" -d
+		apply_session_config "$session_name" "$selected"
+		tmux attach-session -t "$session_name"
 	else
-		tmux attach-session -t $session_name
+		tmux attach-session -t "$session_name"
 	fi
 	exit 0
 fi
